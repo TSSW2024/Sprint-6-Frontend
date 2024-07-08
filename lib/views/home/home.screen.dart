@@ -64,9 +64,9 @@ class HomeScreenState extends State<HomeScreen> {
     final authViewModel = Provider.of<AuthViewModel>(context);
 
     // Si el usuario no está autenticado, navega a /login
-    if (!authViewModel.isAuthenticated) {
-      Future.microtask(() => Navigator.pushReplacementNamed(context, '/login'));
-    }
+    //if (!authViewModel.isAuthenticated) {
+    //Future.microtask(() => Navigator.pushReplacementNamed(context, '/login'));
+    //}
 
     return Scaffold(
       appBar: AppBar(
