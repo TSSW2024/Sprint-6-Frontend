@@ -2,10 +2,10 @@ import "dart:convert";
 import "package:http/http.dart" as http;
 import "package:shared_preferences/shared_preferences.dart";
 
-class AuthService{
-  final String baseURL = "https://backend-test-sepia.vercel.app";
+class AuthService {
+  final String baseURL = "https://backend-auth.tssw.cl";
 
-  Future <bool> login(String email, String password) async {
+  Future<bool> login(String email, String password) async {
     final response = await http.post(
       Uri.parse("$baseURL/login"),
       headers: <String, String>{
@@ -18,7 +18,8 @@ class AuthService{
     );
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+      final result = jsonDecode(response.body);
+      final data = result["data"];
       final token = data["token"];
 
       final prefs = await SharedPreferences.getInstance();
@@ -30,7 +31,7 @@ class AuthService{
     }
   }
 
-  Future <void> signOut() async {
+  Future<void> signOut() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove("token");
   }
@@ -93,6 +94,4 @@ class AuthService{
       throw Exception("Error al enviar el correo");
     }
   }
-
- 
 }
