@@ -1,6 +1,7 @@
 import 'package:ejemplo_1/views/services/transaction_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PagarView extends StatelessWidget {
   final String cantidad;
@@ -90,15 +91,25 @@ class PagarView extends StatelessWidget {
                       );
 
                       // Guardar la transacción usando TransactionService
-                      await transactionService.saveTransaction(transaction);
+                      String? redirectUrl =
+                          await transactionService.saveTransaction(transaction);
 
-                      // Mostrar un mensaje o navegar a otra pantalla después de guardar la transacción
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Transacción guardada con éxito'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
+                      if (redirectUrl != null) {
+                        // Redirigir a la URL de Webpay
+                        if (await canLaunch(redirectUrl)) {
+                          await launch(redirectUrl);
+                        } else {
+                          throw 'Could not launch $redirectUrl';
+                        }
+                      } else {
+                        // Mostrar mensaje de error
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Error al guardar la transacción'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
                     },
                     child: const Text('Depositar'),
                   ),

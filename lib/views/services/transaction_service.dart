@@ -18,7 +18,7 @@ class Transaction {
 }
 
 class TransactionService {
-  Future<void> saveTransaction(Transaction transaction) async {
+  Future<String?> saveTransaction(Transaction transaction) async {
     var url = Uri.parse('https://backend-webpay.tssw.cl/');
     var response = await http.post(
       url,
@@ -27,11 +27,14 @@ class TransactionService {
     );
 
     if (response.statusCode == 200) {
-      // Procesar respuesta
-      print('Transacción guardada con éxito');
+      // Procesar respuesta y obtener la URL de redirección
+      var responseData = json.decode(response.body);
+      return responseData[
+          'redirect_url']; // Ajusta según la estructura de tu respuesta
     } else {
       // Manejar error
       print('Error al guardar la transacción: ${response.body}');
+      return null;
     }
   }
 }
