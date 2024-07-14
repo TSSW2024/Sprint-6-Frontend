@@ -1,6 +1,8 @@
+import 'package:ejemplo_1/views/compra/webpay_view.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/numeric_keyboard.dart';
 import '../../widgets/quick_buttons.dart';
+
 
 class CompraView extends StatefulWidget {
   final String monedaName;
@@ -40,6 +42,23 @@ class _CompraViewState extends State<CompraView> {
             SizedBox(height: 20),
             NumericKeyboard(
               controller: _controller,
+            ),
+            SizedBox(height: 20),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  // naveegar a la pantalla de pago
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PagarView(
+                              cantidad: _controller.text,
+                              monedaName: moneda,
+                            )),
+                  );
+                },
+                child: Text('Pagar'),
+              ),
             ),
           ],
         ),
