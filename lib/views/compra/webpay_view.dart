@@ -1,17 +1,20 @@
+import 'package:ejemplo_1/views/services/transaction_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class PagarView extends StatelessWidget {
-
-  final String cantidad; 
+  final String cantidad;
   final String monedaName;
-  const PagarView( {Key? key, required this.cantidad, required this.monedaName}) : super(key: key);
+  const PagarView({Key? key, required this.cantidad, required this.monedaName})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
     final double cantidadCLP = double.tryParse(cantidad) ?? 0.0;
     final double cantidadConvertida = _convertirMoneda(cantidadCLP, monedaName);
+
+    // Crear una instancia de TransactionService
+    final transactionService = TransactionService();
 
     return Scaffold(
       appBar: AppBar(
@@ -53,29 +56,50 @@ class PagarView extends StatelessWidget {
                   const SizedBox(height: 10),
                   Center(
                       child: Text(
-                   "\$ $cantidad CLP",
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    "\$ $cantidad CLP",
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
                   )),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
-                    child: Image.asset('assets/images/logo-webpay.png', height: 150),
+                    child: Image.asset('assets/images/logo-webpay.png',
+                        height: 150),
                   ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children:  [
+                    children: [
                       Icon(Icons.check_circle, color: Colors.green),
                       SizedBox(width: 5),
                       Text(
                         '$cantidadConvertida $monedaName',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      // Crear la transacción
+                      Transaction transaction = Transaction(
+                        ordenId: 'orden123', // Usa una orden ID válida
+                        sessionId: 'session123', // Usa una sesión ID válida
+                        monto: cantidadCLP.toInt(),
+                      );
+
+                      // Guardar la transacción usando TransactionService
+                      await transactionService.saveTransaction(transaction);
+
+                      // Mostrar un mensaje o navegar a otra pantalla después de guardar la transacción
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Transacción guardada con éxito'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    },
                     child: const Text('Depositar'),
                   ),
                 ],
@@ -86,21 +110,21 @@ class PagarView extends StatelessWidget {
       ),
     );
   }
-}
 
-double _convertirMoneda(double cantidad, String monedaName) {
-  const double tasaBtc = 0.000000018689; // 1 CLP = 0.000000018689 BTC  
-  const double tasaEth = 0.000000346378 ; // 1 CLP = 0.000000346378 ETH
-  const double tasalite = 0.000015904257778; // 1 CLP = 0.16155089 USD
+  double _convertirMoneda(double cantidad, String monedaName) {
+    const double tasaBtc = 0.000000018689; // 1 CLP = 0.000000018689 BTC
+    const double tasaEth = 0.000000346378; // 1 CLP = 0.000000346378 ETH
+    const double tasalite = 0.000015904257778; // 1 CLP = 0.16155089 USD
 
-  switch (monedaName) {
-    case 'Bitcoin':
-      return cantidad * tasaBtc;
-    case 'Ethereum':
-      return cantidad * tasaEth;
-    case 'Litecoin':
-      return cantidad * tasalite;
-    default:
-      return 0.0;
+    switch (monedaName) {
+      case 'Bitcoin':
+        return cantidad * tasaBtc;
+      case 'Ethereum':
+        return cantidad * tasaEth;
+      case 'Litecoin':
+        return cantidad * tasalite;
+      default:
+        return 0.0;
+    }
   }
 }

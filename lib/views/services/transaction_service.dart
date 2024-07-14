@@ -19,7 +19,7 @@ class Transaction {
 
 class TransactionService {
   Future<void> saveTransaction(Transaction transaction) async {
-    var url = Uri.parse(' https://backend-webpay.tssw.cl/');
+    var url = Uri.parse('https://backend-webpay.tssw.cl/');
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
