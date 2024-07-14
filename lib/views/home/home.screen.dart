@@ -70,14 +70,14 @@ class HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Utem  TX'),
+        title: const Text('Utem TX'),
         actions: <Widget>[
           IconButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const historial_transacciones()),
+                      builder: (context) =>  TransactionScreen()),
                 );
               },
               icon: const Icon(Icons.history)),
