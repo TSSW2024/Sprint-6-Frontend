@@ -84,7 +84,7 @@ class MercadoTab extends StatelessWidget {
       length: 3,
       child: Column(
         children: [
-          const Row(
+          Row(
             children: [
               Text("Monedas 1.0", style: TextStyle(fontSize: 24)),
               SizedBox(width: 10), // Espacio entre los elementos
@@ -112,7 +112,7 @@ class MercadoTab extends StatelessWidget {
           ),
           SizedBox(
             height: altoActual * 0.5,
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.all(8.0),
               child: TabBarView(
                 children: [
@@ -129,14 +129,24 @@ class MercadoTab extends StatelessWidget {
   }
 }
 
-class TopTab extends StatelessWidget {
+class TopTab extends StatefulWidget {
   const TopTab({super.key});
+
+  @override
+  _TopTabState createState() => _TopTabState();
+}
+
+class _TopTabState extends State<TopTab> {
+  Map<String, bool> likes = {};
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: _monedas.length,
       itemBuilder: (context, index) {
+        String moneda = _monedas[index]["moneda"];
+        bool isLiked = likes[moneda] ?? false;
+
         return Container(
           height: 60,
           margin: const EdgeInsets.all(8),
@@ -184,6 +194,17 @@ class TopTab extends StatelessWidget {
                   ],
                 ),
               ),
+              IconButton(
+                icon: Icon(
+                  isLiked ? Icons.star : Icons.star_border,
+                  color: isLiked ? Colors.yellow : Colors.grey,
+                ),
+                onPressed: () {
+                  setState(() {
+                    likes[moneda] = !isLiked;
+                  });
+                },
+              ),
             ],
           ),
         );
@@ -199,7 +220,7 @@ class SeguimientoTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => CryptoProvider(),
-      child: const TopTab(),
+      child: CryptoList(),
     );
   }
 }

@@ -4,10 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
 
-
-
 class CryptoProvider with ChangeNotifier {
-  final _channel = WebSocketChannel.connect(Uri.parse('ws://localhost:8080/ws'));
+  final _channel =
+      WebSocketChannel.connect(Uri.parse('ws://localhost:8080/ws'));
   Map<String, List<dynamic>> _cryptos = {'popular': [], 'new': []};
   bool _loading = true;
   String? _error;
@@ -57,8 +56,6 @@ class CryptoProvider with ChangeNotifier {
     super.dispose();
   }
 }
-
-
 
 class CryptoList extends StatelessWidget {
   @override
@@ -125,7 +122,9 @@ class CryptoTab extends StatelessWidget {
           trailing: Text(
             '${crypto['change']}%',
             style: TextStyle(
-              color: double.parse(crypto['change']) > 0 ? Colors.green : Colors.red,
+              color: double.parse(crypto['change']) > 0
+                  ? Colors.green
+                  : Colors.red,
             ),
           ),
           onTap: () {
