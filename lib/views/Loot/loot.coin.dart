@@ -89,7 +89,7 @@ class _CryptoLootBoxState extends State<CryptoLootBox> {
 
   void spinWheel() {
     final creditProvider = Provider.of<CreditProvider>(context, listen: false);
-    if ( creditProvider.credits < 200) {
+    if (creditProvider.credits < 200) {
       showDialog(
         context: context,
         builder: (context) {
@@ -113,7 +113,7 @@ class _CryptoLootBoxState extends State<CryptoLootBox> {
 
     final item = getRandomItem();
     setState(() {
-      selectedItem = null; 
+      selectedItem = null;
       isSpinning = true;
       creditProvider.deductCredits(200);
     });

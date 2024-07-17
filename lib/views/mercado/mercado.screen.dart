@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'cripto_search.dart';
-import 'seguimiento.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'invitacion.dart';
 
@@ -33,7 +32,7 @@ class MercadoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final altoActual = MediaQuery.of(context).size.height;
     return DefaultTabController(
-      length: 2, // Dos tabs: Mercado y Seguimiento
+      length: 1, // 1 tabs: Mercado
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -43,7 +42,6 @@ class MercadoScreen extends StatelessWidget {
                 Tab(
                   child: Text("Mercado", style: TextStyle(fontSize: 20)),
                 ),
-                Tab(child: Text("Seguimiento", style: TextStyle(fontSize: 20))),
               ],
             ),
           ),
@@ -51,7 +49,6 @@ class MercadoScreen extends StatelessWidget {
         body: const TabBarView(
           children: [
             MercadoTab(),
-            SeguimientoTab(),
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -86,7 +83,6 @@ class MercadoTab extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text("Monedas 1.0", style: TextStyle(fontSize: 24)),
               SizedBox(width: 10), // Espacio entre los elementos
               Expanded(
                 child: CryptoTypeaheadWidget(),
@@ -209,18 +205,6 @@ class _TopTabState extends State<TopTab> {
           ),
         );
       },
-    );
-  }
-}
-
-class SeguimientoTab extends StatelessWidget {
-  const SeguimientoTab({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => CryptoProvider(),
-      child: CryptoList(),
     );
   }
 }
