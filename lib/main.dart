@@ -13,7 +13,10 @@ import 'services/auth.service.dart';
 
 import 'views/Loot/loot.dart';
 import 'views/Loot/loot.Free.dart';
+import 'views/Loot/credit_provider.dart';
+// Importa la nueva vista de conversión
 import 'views/services/transaction_service.dart';
+
 
 void main() {
   runApp(const MainApp());
@@ -30,6 +33,7 @@ class MainApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => CreditProvider()),
         ChangeNotifierProvider(create: (_) => AuthViewModel(authService)),
         ChangeNotifierProvider(create: (_) => ProfileViewModel(profileService)),
         Provider(create: (_) => transactionService),
