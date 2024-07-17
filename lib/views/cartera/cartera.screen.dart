@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:provider/provider.dart';
 import '../home/saldo/saldo.dart';
-import '../cartera/recomendaciones_ad.dart'; // muestra un anuncio en pantalla @moizefal4
 import '../../viewmodels/profile.viewmodel.dart';
-import '../cartera/moneda.dart';
+import '../cartera/moneda.dart'; // Asegúrate de tener la ruta correcta
 
 class CarteraScreen extends StatefulWidget {
   const CarteraScreen({super.key});
@@ -28,49 +27,43 @@ class _CarteraScreenState extends State<CarteraScreen> {
     ];
 
     return Scaffold(
-      appBar: AppBar(),
       body: SingleChildScrollView(
-        child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              AnuncioWidget(
-                titulo: anuncioSeleccionado['titulo']!,
-                subtitulo: anuncioSeleccionado['subtitulo']!,
-                imagenUrl: anuncioSeleccionado['icono']!,
-                url: anuncioSeleccionado['url']!,
-              ), // @moizefal4
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
               SaldoWidget(saldo: saldototal),
+              const SizedBox(height: 20),
               dataMap.isNotEmpty
                   ? Padding(
-                      padding: const EdgeInsets.only(left: 50.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: SizedBox(
-                              height: 200,
-                              width: 300,
-                              child: PieChart(
-                                dataMap: dataMap.cast<String,
-                                    double>(), // Cast a Map<String, double>
-                                colorList: pieColors,
-                                animationDuration:
-                                    const Duration(milliseconds: 800),
-                              ))))
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: SizedBox(
+                        height: 200,
+                        child: PieChart(
+                          dataMap: dataMap.cast<String,
+                              double>(), // Cast a Map<String, double>
+                          colorList: pieColors,
+                          animationDuration: const Duration(milliseconds: 800),
+                        ),
+                      ),
+                    )
                   : const Text('No tiene saldo'),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Lista de monedas:',
-                  style: TextStyle(fontSize: 20.0),
-                ),
+              const SizedBox(height: 20),
+              const Text(
+                'Lista de monedas:',
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
               ),
+              const SizedBox(height: 10),
               ListView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: dataMap.length,
                 itemBuilder: (context, index) {
                   String key = dataMap.keys.elementAt(index);
                   return Card(
+                    elevation: 4,
+                    margin: const EdgeInsets.symmetric(vertical: 8),
                     child: ListTile(
                       leading: CircleAvatar(
                         backgroundImage: AssetImage(
@@ -78,7 +71,8 @@ class _CarteraScreenState extends State<CarteraScreen> {
                                 ''), // Manejar posible nulo
                         radius: 30,
                       ),
-                      title: Text(key),
+                      title: Text(key,
+                          style: const TextStyle(fontWeight: FontWeight.w500)),
                       trailing: ElevatedButton(
                         onPressed: () {
                           Navigator.push(
@@ -95,11 +89,10 @@ class _CarteraScreenState extends State<CarteraScreen> {
                         },
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
-                              Color.fromARGB(255, 23, 206, 54)),
+                              Colors.greenAccent),
                         ),
                         child: const Text("Vender",
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 13.9)),
+                            style: TextStyle(color: Colors.white)),
                       ),
                     ),
                   );
