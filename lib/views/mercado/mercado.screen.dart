@@ -63,7 +63,7 @@ class _MercadoScreenState extends State<MercadoScreen> {
         ),
         body: TabBarView(
           children: [
-            MercadoTab(),
+            MercadoTab(futureMonedas: futureMonedas),
           ],
         ),
         floatingActionButton: FloatingActionButton(
