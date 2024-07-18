@@ -13,8 +13,14 @@ import 'services/auth.service.dart';
 
 import 'views/Loot/loot.dart';
 import 'views/Loot/loot.Free.dart';
+<<<<<<< HEAD
 
+=======
+import 'views/Loot/credit_provider.dart';
+>>>>>>> 8d8f5ed69233e761338da2a838858c9d9b541691
 // Importa la nueva vista de conversión
+import 'views/services/transaction_service.dart';
+
 
 void main() {
   runApp(const MainApp());
@@ -27,10 +33,14 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final profileService = ProfileService();
     final authService = AuthService();
+    final transactionService = TransactionService();
+
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => CreditProvider()),
         ChangeNotifierProvider(create: (_) => AuthViewModel(authService)),
         ChangeNotifierProvider(create: (_) => ProfileViewModel(profileService)),
+        Provider(create: (_) => transactionService),
       ],
       child: MaterialApp(
         title: 'Login App',

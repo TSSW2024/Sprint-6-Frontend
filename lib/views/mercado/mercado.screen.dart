@@ -1,9 +1,10 @@
+import 'package:ejemplo_1/models/criptomonedasFetch.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'cripto_search.dart';
-import 'seguimiento.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'invitacion.dart';
+import 'package:ejemplo_1/services/monedas_service.dart';
 
 final List _monedas = [
   {
@@ -26,14 +27,27 @@ final List _monedas = [
   },
 ];
 
-class MercadoScreen extends StatelessWidget {
+class MercadoScreen extends StatefulWidget {
   const MercadoScreen({super.key});
+
+  @override
+  _MercadoScreenState createState() => _MercadoScreenState();
+}
+
+class _MercadoScreenState extends State<MercadoScreen> {
+  late Future<MonedasResponse> futureMonedas;
+
+  @override
+  void initState() {
+    super.initState();
+    futureMonedas = fetchMonedas();
+  }
 
   @override
   Widget build(BuildContext context) {
     final altoActual = MediaQuery.of(context).size.height;
     return DefaultTabController(
-      length: 2, // Dos tabs: Mercado y Seguimiento
+      length: 1, // 1 tabs: Mercado
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -43,20 +57,17 @@ class MercadoScreen extends StatelessWidget {
                 Tab(
                   child: Text("Mercado", style: TextStyle(fontSize: 20)),
                 ),
-                Tab(child: Text("Seguimiento", style: TextStyle(fontSize: 20))),
               ],
             ),
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            MercadoTab(),
-            SeguimientoTab(),
+            MercadoTab(futureMonedas: futureMonedas),
           ],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            // Acción al presionar el botón
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => InvitacionScreen()),
@@ -65,9 +76,9 @@ class MercadoScreen extends StatelessWidget {
           backgroundColor: Colors.yellowAccent,
           child: SvgPicture.asset(
             'assets/images/gift-svgrepo-com (2).svg',
-            width: 50, // Ajusta el tamaño según sea necesario
-            height: 50, // Ajusta el tamaño según sea necesario
-          ), // Icono del botón
+            width: 50,
+            height: 50,
+          ),
         ),
       ),
     );
@@ -75,7 +86,9 @@ class MercadoScreen extends StatelessWidget {
 }
 
 class MercadoTab extends StatelessWidget {
-  const MercadoTab({super.key});
+  final Future<MonedasResponse> futureMonedas;
+
+  const MercadoTab({super.key, required this.futureMonedas});
 
   @override
   Widget build(BuildContext context) {
@@ -84,9 +97,8 @@ class MercadoTab extends StatelessWidget {
       length: 3,
       child: Column(
         children: [
-          const Row(
+          Row(
             children: [
-              Text("Monedas 1.0", style: TextStyle(fontSize: 24)),
               SizedBox(width: 10), // Espacio entre los elementos
               Expanded(
                 child: CryptoTypeaheadWidget(),
@@ -104,22 +116,35 @@ class MercadoTab extends StatelessWidget {
               indicatorPadding: const EdgeInsets.all(10),
               overlayColor: MaterialStateProperty.all(Colors.transparent),
               tabs: [
-                Tab(text: 'Top'),
-                Tab(text: 'Top Decliners'),
-                Tab(text: 'Nuevos'),
+                Tab(text: 'Populares'),
+                Tab(text: 'Perdedores'),
+                Tab(text: 'Ganadores'),
               ],
             ),
           ),
           SizedBox(
             height: altoActual * 0.5,
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.all(8.0),
-              child: TabBarView(
-                children: [
-                  TopTab(),
-                  Center(child: Text('Top Decliners')),
-                  Center(child: Text('Nuevos')),
-                ],
+              child: FutureBuilder<MonedasResponse>(
+                future: futureMonedas,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData) {
+                    return Center(child: Text('No hay datos disponibles'));
+                  } else {
+                    return TabBarView(
+                      children: [
+                        TopTab(monedas: snapshot.data!.populares),
+                        Perdedores(monedas: snapshot.data!.perdedores),
+                        Nuevos(monedas: snapshot.data!.ganadores),
+                      ],
+                    );
+                  }
+                },
               ),
             ),
           ),
@@ -129,14 +154,26 @@ class MercadoTab extends StatelessWidget {
   }
 }
 
-class TopTab extends StatelessWidget {
-  const TopTab({super.key});
+class TopTab extends StatefulWidget {
+  final List<Moneda> monedas;
+
+  const TopTab({super.key, required this.monedas});
+
+  @override
+  _TopTabState createState() => _TopTabState();
+}
+
+class _TopTabState extends State<TopTab> {
+  Map<String, bool> likes = {};
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: _monedas.length,
+      itemCount: widget.monedas.length,
       itemBuilder: (context, index) {
+        String moneda = widget.monedas[index].name;
+        bool isLiked = likes[moneda] ?? false;
+
         return Container(
           height: 60,
           margin: const EdgeInsets.all(8),
@@ -158,8 +195,8 @@ class TopTab extends StatelessWidget {
             children: [
               Flexible(
                 flex: 1,
-                child: Image.asset(
-                  _monedas[index]["icon"],
+                child: Image.network(
+                  widget.monedas[index].image,
                   width: 50,
                   height: 50,
                 ),
@@ -168,7 +205,7 @@ class TopTab extends StatelessWidget {
                 flex: 3,
                 fit: FlexFit.tight,
                 child: Text(
-                  _monedas[index]["moneda"],
+                  widget.monedas[index].name,
                   style: const TextStyle(fontSize: 20),
                 ),
               ),
@@ -177,12 +214,23 @@ class TopTab extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      _monedas[index]["value"].toString(),
+                      widget.monedas[index].price,
                       style: const TextStyle(color: Colors.green),
                     ),
-                    Text(_monedas[index]["ratio"].toString()),
+                    Text(widget.monedas[index].change24h),
                   ],
                 ),
+              ),
+              IconButton(
+                icon: Icon(
+                  isLiked ? Icons.star : Icons.star_border,
+                  color: isLiked ? Colors.yellow : Colors.grey,
+                ),
+                onPressed: () {
+                  setState(() {
+                    likes[moneda] = !isLiked;
+                  });
+                },
               ),
             ],
           ),
@@ -192,14 +240,174 @@ class TopTab extends StatelessWidget {
   }
 }
 
-class SeguimientoTab extends StatelessWidget {
-  const SeguimientoTab({super.key});
+class Perdedores extends StatefulWidget {
+  final List<Moneda> monedas;
+
+  const Perdedores({super.key, required this.monedas});
+
+  @override
+  _PerdedoresState createState() => _PerdedoresState();
+}
+
+class _PerdedoresState extends State<Perdedores> {
+  Map<String, bool> likes = {};
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => CryptoProvider(),
-      child: const TopTab(),
+    return ListView.builder(
+      itemCount: widget.monedas.length,
+      itemBuilder: (context, index) {
+        String moneda = widget.monedas[index].name;
+        bool isLiked = likes[moneda] ?? false;
+
+        return Container(
+          height: 60,
+          margin: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                flex: 1,
+                child: Image.network(
+                  widget.monedas[index].image,
+                  width: 50,
+                  height: 50,
+                ),
+              ),
+              Flexible(
+                flex: 3,
+                fit: FlexFit.tight,
+                child: Text(
+                  widget.monedas[index].name,
+                  style: const TextStyle(fontSize: 20),
+                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: Column(
+                  children: [
+                    Text(
+                      widget.monedas[index].price,
+                      style: const TextStyle(color: Colors.green),
+                    ),
+                    Text(widget.monedas[index].change24h),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: Icon(
+                  isLiked ? Icons.star : Icons.star_border,
+                  color: isLiked ? Colors.yellow : Colors.grey,
+                ),
+                onPressed: () {
+                  setState(() {
+                    likes[moneda] = !isLiked;
+                  });
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class Nuevos extends StatefulWidget {
+  final List<Moneda> monedas;
+
+  const Nuevos({super.key, required this.monedas});
+
+  @override
+  _NuevosState createState() => _NuevosState();
+}
+
+class _NuevosState extends State<Nuevos> {
+  Map<String, bool> likes = {};
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: widget.monedas.length,
+      itemBuilder: (context, index) {
+        String moneda = widget.monedas[index].name;
+        bool isLiked = likes[moneda] ?? false;
+
+        return Container(
+          height: 60,
+          margin: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                flex: 1,
+                child: Image.network(
+                  widget.monedas[index].image,
+                  width: 50,
+                  height: 50,
+                ),
+              ),
+              Flexible(
+                flex: 3,
+                fit: FlexFit.tight,
+                child: Text(
+                  widget.monedas[index].name,
+                  style: const TextStyle(fontSize: 20),
+                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: Column(
+                  children: [
+                    Text(
+                      widget.monedas[index].price,
+                      style: const TextStyle(color: Colors.green),
+                    ),
+                    Text(widget.monedas[index].change24h),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: Icon(
+                  isLiked ? Icons.star : Icons.star_border,
+                  color: isLiked ? Colors.yellow : Colors.grey,
+                ),
+                onPressed: () {
+                  setState(() {
+                    likes[moneda] = !isLiked;
+                  });
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

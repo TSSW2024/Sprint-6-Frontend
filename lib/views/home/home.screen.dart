@@ -64,20 +64,20 @@ class HomeScreenState extends State<HomeScreen> {
     final authViewModel = Provider.of<AuthViewModel>(context);
 
     // Si el usuario no está autenticado, navega a /login
-    if (!authViewModel.isAuthenticated) {
-      Future.microtask(() => Navigator.pushReplacementNamed(context, '/login'));
-    }
+    //if (!authViewModel.isAuthenticated) {
+    //Future.microtask(() => Navigator.pushReplacementNamed(context, '/login'));
+    //}
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Utem  TX'),
+        title: const Text('Utem TX'),
         actions: <Widget>[
           IconButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const historial_transacciones()),
+                      builder: (context) =>  TransactionScreen()),
                 );
               },
               icon: const Icon(Icons.history)),
