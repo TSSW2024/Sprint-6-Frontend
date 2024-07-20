@@ -1,9 +1,11 @@
 import 'package:ejemplo_1/models/criptomonedasFetch.dart';
+import 'package:ejemplo_1/views/market/market_page.dart';
 import 'package:flutter/material.dart';
 import 'cripto_search.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'invitacion.dart';
 import 'package:ejemplo_1/services/monedas_service.dart';
+import 'package:logger/logger.dart';
 
 class MercadoScreen extends StatefulWidget {
   const MercadoScreen({super.key});
@@ -87,7 +89,7 @@ class MercadoTab extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: altoActual * 0.59,
+            height: altoActual * 0.55,
             child: Padding(
               padding: EdgeInsets.all(8.0),
               child: FutureBuilder<MonedasResponse>(
@@ -137,62 +139,75 @@ class _TopTabState extends State<TopTab> {
       itemBuilder: (context, index) {
         String moneda = widget.monedas[index].name;
 
-        return Container(
-          height: 60,
-          margin: const EdgeInsets.all(8),
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: const Offset(0, 3),
+        return GestureDetector(
+          onTap: () {
+            final String symbol = '${widget.monedas[index].name}USDT';
+
+            Logger().i('Tapped on $symbol');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MarketPage(symbol: symbol),
               ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                flex: 1,
-                child: Image.network(
-                  widget.monedas[index].image,
-                  width: 50,
-                  height: 50,
+            );
+          },
+          child: Container(
+            height: 60,
+            margin: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: const Offset(0, 3),
                 ),
-              ),
-              Flexible(
-                flex: 3,
-                fit: FlexFit.tight,
-                child: Text(
-                  widget.monedas[index].name,
-                  style: const TextStyle(fontSize: 20),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: Image.network(
+                    widget.monedas[index].image,
+                    width: 50,
+                    height: 50,
+                  ),
                 ),
-              ),
-              Flexible(
-                flex: 2,
-                child: Column(
-                  children: [
-                    Text(
-                      widget.monedas[index].price,
-                      style:
-                          const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                    ),
-                    Text(
-                      widget.monedas[index].change24h,
-                      style: widget.monedas[index].change24h.contains('-')
-                          ? const TextStyle(
-                              color: Color.fromARGB(255, 206, 51, 12))
-                          : const TextStyle(
-                              color: Color.fromARGB(255, 30, 187, 64)),
-                    ),
-                  ],
+                Flexible(
+                  flex: 3,
+                  fit: FlexFit.tight,
+                  child: Text(
+                    widget.monedas[index].name,
+                    style: const TextStyle(fontSize: 20),
+                  ),
                 ),
-              ),
-            ],
+                Flexible(
+                  flex: 2,
+                  child: Column(
+                    children: [
+                      Text(
+                        widget.monedas[index].price,
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 0, 0, 0)),
+                      ),
+                      Text(
+                        widget.monedas[index].change24h,
+                        style: widget.monedas[index].change24h.contains('-')
+                            ? const TextStyle(
+                                color: Color.fromARGB(255, 206, 51, 12))
+                            : const TextStyle(
+                                color: Color.fromARGB(255, 30, 187, 64)),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -219,57 +234,70 @@ class _PerdedoresState extends State<Perdedores> {
       itemBuilder: (context, index) {
         String moneda = widget.monedas[index].name;
 
-        return Container(
-          height: 60,
-          margin: const EdgeInsets.all(8),
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: const Offset(0, 3),
+        return GestureDetector(
+          onTap: () {
+            final String symbol = '${widget.monedas[index].name}USDT';
+
+            Logger().i('Tapped on $symbol');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MarketPage(symbol: symbol),
               ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                flex: 1,
-                child: Image.network(
-                  widget.monedas[index].image,
-                  width: 50,
-                  height: 50,
+            );
+          },
+          child: Container(
+            height: 60,
+            margin: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: const Offset(0, 3),
                 ),
-              ),
-              Flexible(
-                flex: 3,
-                fit: FlexFit.tight,
-                child: Text(
-                  widget.monedas[index].name,
-                  style: const TextStyle(fontSize: 15),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: Image.network(
+                    widget.monedas[index].image,
+                    width: 50,
+                    height: 50,
+                  ),
                 ),
-              ),
-              Flexible(
-                flex: 2,
-                child: Column(
-                  children: [
-                    Text(
-                      widget.monedas[index].price,
-                      style:
-                          const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                    ),
-                    Text(widget.monedas[index].change24h,
+                Flexible(
+                  flex: 3,
+                  fit: FlexFit.tight,
+                  child: Text(
+                    widget.monedas[index].name,
+                    style: const TextStyle(fontSize: 15),
+                  ),
+                ),
+                Flexible(
+                  flex: 2,
+                  child: Column(
+                    children: [
+                      Text(
+                        widget.monedas[index].price,
                         style: const TextStyle(
-                            color: Color.fromARGB(255, 206, 51, 12))),
-                  ],
+                            color: Color.fromARGB(255, 0, 0, 0)),
+                      ),
+                      Text(widget.monedas[index].change24h,
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 206, 51, 12))),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -296,57 +324,70 @@ class _NuevosState extends State<Nuevos> {
       itemBuilder: (context, index) {
         String moneda = widget.monedas[index].name;
 
-        return Container(
-          height: 60,
-          margin: const EdgeInsets.all(8),
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: const Offset(0, 3),
+        return GestureDetector(
+          onTap: () {
+            final String symbol = '${widget.monedas[index].name}USDT';
+
+            Logger().i('Tapped on $symbol');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MarketPage(symbol: symbol),
               ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                flex: 1,
-                child: Image.network(
-                  widget.monedas[index].image,
-                  width: 50,
-                  height: 50,
+            );
+          },
+          child: Container(
+            height: 60,
+            margin: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: const Offset(0, 3),
                 ),
-              ),
-              Flexible(
-                flex: 3,
-                fit: FlexFit.tight,
-                child: Text(
-                  widget.monedas[index].name,
-                  style: const TextStyle(fontSize: 15),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: Image.network(
+                    widget.monedas[index].image,
+                    width: 50,
+                    height: 50,
+                  ),
                 ),
-              ),
-              Flexible(
-                flex: 2,
-                child: Column(
-                  children: [
-                    Text(
-                      widget.monedas[index].price,
-                      style:
-                          const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                    ),
-                    Text(widget.monedas[index].change24h,
+                Flexible(
+                  flex: 3,
+                  fit: FlexFit.tight,
+                  child: Text(
+                    widget.monedas[index].name,
+                    style: const TextStyle(fontSize: 15),
+                  ),
+                ),
+                Flexible(
+                  flex: 2,
+                  child: Column(
+                    children: [
+                      Text(
+                        widget.monedas[index].price,
                         style: const TextStyle(
-                            color: Color.fromARGB(255, 30, 187, 64))),
-                  ],
+                            color: Color.fromARGB(255, 0, 0, 0)),
+                      ),
+                      Text(widget.monedas[index].change24h,
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 30, 187, 64))),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

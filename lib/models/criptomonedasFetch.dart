@@ -22,6 +22,11 @@ class Moneda {
       change24h: json['change_24h'],
     );
   }
+
+  @override
+  String toString() {
+    return 'Moneda{index: $index, image: $image, name: $name, price: $price, change24h: $change24h}';
+  }
 }
 
 class MonedasResponse {
