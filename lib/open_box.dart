@@ -35,7 +35,8 @@ class ApiService {
     }
   }
 
-  static void showNotification(BuildContext context, String title, String body) {
+  static void showNotification(
+      BuildContext context, String title, String body) {
     final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(

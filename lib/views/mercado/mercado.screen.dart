@@ -1,31 +1,9 @@
 import 'package:ejemplo_1/models/criptomonedasFetch.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'cripto_search.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'invitacion.dart';
 import 'package:ejemplo_1/services/monedas_service.dart';
-
-final List _monedas = [
-  {
-    "moneda": "BTC",
-    "value": 69350.08,
-    "ratio": -1.0900,
-    "icon": "assets/images/bitcoin.png"
-  },
-  {
-    "moneda": "ETH",
-    "value": 2350.67,
-    "ratio": 0.7600,
-    "icon": "assets/images/etherum.png"
-  },
-  {
-    "moneda": "LTC",
-    "value": 182.54,
-    "ratio": 2.1500,
-    "icon": "assets/images/litecoin.png"
-  },
-];
 
 class MercadoScreen extends StatefulWidget {
   const MercadoScreen({super.key});
@@ -65,20 +43,6 @@ class _MercadoScreenState extends State<MercadoScreen> {
           children: [
             MercadoTab(futureMonedas: futureMonedas),
           ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => InvitacionScreen()),
-            );
-          },
-          backgroundColor: Colors.yellowAccent,
-          child: SvgPicture.asset(
-            'assets/images/gift-svgrepo-com (2).svg',
-            width: 50,
-            height: 50,
-          ),
         ),
       ),
     );
@@ -123,7 +87,7 @@ class MercadoTab extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: altoActual * 0.5,
+            height: altoActual * 0.65,
             child: Padding(
               padding: EdgeInsets.all(8.0),
               child: FutureBuilder<MonedasResponse>(
@@ -172,7 +136,6 @@ class _TopTabState extends State<TopTab> {
       itemCount: widget.monedas.length,
       itemBuilder: (context, index) {
         String moneda = widget.monedas[index].name;
-        bool isLiked = likes[moneda] ?? false;
 
         return Container(
           height: 60,
@@ -210,27 +173,24 @@ class _TopTabState extends State<TopTab> {
                 ),
               ),
               Flexible(
-                flex: 1,
+                flex: 2,
                 child: Column(
                   children: [
                     Text(
                       widget.monedas[index].price,
-                      style: const TextStyle(color: Colors.green),
+                      style:
+                          const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                     ),
-                    Text(widget.monedas[index].change24h),
+                    Text(
+                      widget.monedas[index].change24h,
+                      style: widget.monedas[index].change24h.contains('-')
+                          ? const TextStyle(
+                              color: Color.fromARGB(255, 206, 51, 12))
+                          : const TextStyle(
+                              color: Color.fromARGB(255, 30, 187, 64)),
+                    ),
                   ],
                 ),
-              ),
-              IconButton(
-                icon: Icon(
-                  isLiked ? Icons.star : Icons.star_border,
-                  color: isLiked ? Colors.yellow : Colors.grey,
-                ),
-                onPressed: () {
-                  setState(() {
-                    likes[moneda] = !isLiked;
-                  });
-                },
               ),
             ],
           ),
@@ -258,7 +218,6 @@ class _PerdedoresState extends State<Perdedores> {
       itemCount: widget.monedas.length,
       itemBuilder: (context, index) {
         String moneda = widget.monedas[index].name;
-        bool isLiked = likes[moneda] ?? false;
 
         return Container(
           height: 60,
@@ -292,31 +251,23 @@ class _PerdedoresState extends State<Perdedores> {
                 fit: FlexFit.tight,
                 child: Text(
                   widget.monedas[index].name,
-                  style: const TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 15),
                 ),
               ),
               Flexible(
-                flex: 1,
+                flex: 2,
                 child: Column(
                   children: [
                     Text(
                       widget.monedas[index].price,
-                      style: const TextStyle(color: Colors.green),
+                      style:
+                          const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                     ),
-                    Text(widget.monedas[index].change24h),
+                    Text(widget.monedas[index].change24h,
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 206, 51, 12))),
                   ],
                 ),
-              ),
-              IconButton(
-                icon: Icon(
-                  isLiked ? Icons.star : Icons.star_border,
-                  color: isLiked ? Colors.yellow : Colors.grey,
-                ),
-                onPressed: () {
-                  setState(() {
-                    likes[moneda] = !isLiked;
-                  });
-                },
               ),
             ],
           ),
@@ -344,7 +295,6 @@ class _NuevosState extends State<Nuevos> {
       itemCount: widget.monedas.length,
       itemBuilder: (context, index) {
         String moneda = widget.monedas[index].name;
-        bool isLiked = likes[moneda] ?? false;
 
         return Container(
           height: 60,
@@ -378,31 +328,23 @@ class _NuevosState extends State<Nuevos> {
                 fit: FlexFit.tight,
                 child: Text(
                   widget.monedas[index].name,
-                  style: const TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 15),
                 ),
               ),
               Flexible(
-                flex: 1,
+                flex: 2,
                 child: Column(
                   children: [
                     Text(
                       widget.monedas[index].price,
-                      style: const TextStyle(color: Colors.green),
+                      style:
+                          const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                     ),
-                    Text(widget.monedas[index].change24h),
+                    Text(widget.monedas[index].change24h,
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 30, 187, 64))),
                   ],
                 ),
-              ),
-              IconButton(
-                icon: Icon(
-                  isLiked ? Icons.star : Icons.star_border,
-                  color: isLiked ? Colors.yellow : Colors.grey,
-                ),
-                onPressed: () {
-                  setState(() {
-                    likes[moneda] = !isLiked;
-                  });
-                },
               ),
             ],
           ),

@@ -76,8 +76,7 @@ class HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) =>  TransactionScreen()),
+                  MaterialPageRoute(builder: (context) => TransactionScreen()),
                 );
               },
               icon: const Icon(Icons.history)),
@@ -124,9 +123,9 @@ class HomeScreenState extends State<HomeScreen> {
           }).toList(),
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
-          backgroundColor: const Color.fromARGB(255, 7, 94, 177),
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white,
+          backgroundColor: Color.fromARGB(232, 233, 217, 195),
+          selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
+          unselectedItemColor: const Color.fromARGB(255, 0, 0, 0),
           selectedFontSize: 14,
           unselectedFontSize: 12,
           type: BottomNavigationBarType.fixed,
