@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'viewmodels/auth.viewmodel.dart';
 import 'viewmodels/profile.viewmodel.dart';
-
 import 'views/home/home.screen.dart';
 import 'views/login/login.screen.dart';
 import 'views/register/register.screen.dart';
-
 import 'services/profile.service.dart';
 import 'services/auth.service.dart';
-
 import 'views/Loot/loot.dart';
 import 'views/Loot/loot.Free.dart';
 // Importa la nueva vista de conversión

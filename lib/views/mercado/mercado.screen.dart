@@ -87,7 +87,7 @@ class MercadoTab extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: altoActual * 0.65,
+            height: altoActual * 0.59,
             child: Padding(
               padding: EdgeInsets.all(8.0),
               child: FutureBuilder<MonedasResponse>(
