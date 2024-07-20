@@ -1,3 +1,4 @@
+import 'package:ejemplo_1/views/Loot/credit_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'viewmodels/auth.viewmodel.dart';
@@ -31,6 +32,7 @@ class MainApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthViewModel(authService)),
         ChangeNotifierProvider(create: (_) => ProfileViewModel(profileService)),
         Provider(create: (_) => transactionService),
+        ChangeNotifierProvider(create: (_) => CreditProvider()),
       ],
       child: MaterialApp(
         title: 'Login App',
