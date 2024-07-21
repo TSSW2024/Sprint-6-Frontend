@@ -96,7 +96,7 @@ class _DescubrirModalState extends State<DescubrirModal> {
                             height: 22,
                             width: 23,
                           ),
-                          title: const Text('Loot'),
+                          title: const Text('Caja Normal'),
                           trailing: const Padding(
                             padding: EdgeInsets.only(right: 10),
                             child: Text(
@@ -123,10 +123,11 @@ class _DescubrirModalState extends State<DescubrirModal> {
                               height: 22,
                               width: 23,
                             ),
-                            title: const Text('Loot Free'),
+                            title: const Text('Caja Premium'),
                             trailing: lootFreeAvailable
                                 ? const Text('Disponible',
-                                    style: TextStyle(color: Colors.green))
+                                    style: TextStyle(
+                                        color: Color.fromRGBO(76, 175, 80, 1)))
                                 : Text(
                                     'Próximo en: ${timeUntilNextLoot.inHours}:${(timeUntilNextLoot.inMinutes % 60).toString().padLeft(2, '0')}:${(timeUntilNextLoot.inSeconds % 60).toString().padLeft(2, '0')}',
                                     style: const TextStyle(color: Colors.red),

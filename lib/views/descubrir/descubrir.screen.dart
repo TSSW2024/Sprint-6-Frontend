@@ -53,8 +53,7 @@ class DescubrirScreen extends StatelessWidget {
                   Container(
                     color: Colors.transparent,
                     child: TabBar(
-                      overlayColor:
-                          MaterialStateProperty.all(Colors.transparent),
+                      overlayColor: WidgetStateProperty.all(Colors.transparent),
                       indicatorSize: TabBarIndicatorSize.tab,
                       indicator: BoxDecoration(
                         borderRadius: BorderRadius.circular(50),

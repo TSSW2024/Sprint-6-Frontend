@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewmodels/auth.viewmodel.dart';
-import '../descubrir/descubrir.screen.dart';
 import '../mercado/mercado.screen.dart';
 import '../cartera/cartera.screen.dart';
 import '../profile/profile.screen.dart';
 import '../home/modal/modal.dart';
+import '../compra/compra_view.dart';
+import '../cartera/historial_transacciones.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -62,20 +63,31 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);
 
-    // Si el usuario no está autenticado, navega a /login
     if (!authViewModel.isAuthenticated) {
       Future.microtask(() => Navigator.pushReplacementNamed(context, '/login'));
     }
+// cambia el color del topbar
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Utem Trading'),
+        title: const Text('Utem TX', style: TextStyle(fontSize: 16)),
+        titleTextStyle: const TextStyle(color: Colors.white),
+        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.person),
             onPressed: () {
-              // Aquí puedes manejar la acción cuando se presiona el botón.
-              // Por ejemplo, puedes navegar a la pantalla de perfil.
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TransactionScreen()),
+              );
+            },
+            icon: const Icon(Icons.history),
+            color: Colors.white,
+          ),
+          IconButton(
+            icon: const Icon(Icons.person),
+            color: Colors.white,
+            onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const ProfileScreen()),
@@ -114,9 +126,9 @@ class HomeScreenState extends State<HomeScreen> {
           }).toList(),
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
-          backgroundColor: const Color.fromARGB(255, 7, 94, 177),
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white,
+          backgroundColor: Color.fromARGB(255, 201, 180, 170),
+          selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
+          unselectedItemColor: const Color.fromARGB(255, 0, 0, 0),
           selectedFontSize: 14,
           unselectedFontSize: 12,
           type: BottomNavigationBarType.fixed,

@@ -20,10 +20,20 @@ dependencies:
   carousel_slider: ^4.2.1
   pie_chart: ^5.0.0
   charts_flutter: ^0.11.0  
+  fl_chart: ^0.68.0
   firebase_core: ^2.31.1
-  http: ^1.2.1 # Para hacer peticiones HTTP
+  cloud_firestore: ^4.17.4  
+  qr_flutter: ^4.1.0
+  http: ^1.2.1
   flutter_typeahead: ^4.8.0
-  
+  shared_preferences: ^2.2.3
+  web_socket_channel: ^3.0.0
+  flutter_local_notifications: ^17.2.1+1
+  firebase_auth: ^4.20.0
+  encrypt: ^5.0.3
+  syncfusion_flutter_charts: ^21.2.4
+  logger: ^2.4.0
+  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -37,3 +47,4 @@ flutter:
     - assets/grupo.png
     - assets/images/
     - assets/
+

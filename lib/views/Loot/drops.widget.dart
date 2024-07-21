@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'dart:async';
@@ -18,13 +17,16 @@ class DropsWidget extends StatelessWidget {
     final widthOfRow = MediaQuery.of(context).size.width;
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         Column(
           children: [
             const Row(
               children: [
                 Text('Hot Drops🔥',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
               ],
             ),
             SizedBox(
@@ -39,7 +41,8 @@ class DropsWidget extends StatelessWidget {
             const Row(
               children: [
                 Text('Normal Drops',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
               ],
             ),
             SizedBox(
