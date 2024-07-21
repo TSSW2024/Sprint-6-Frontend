@@ -30,68 +30,71 @@ class _CarteraScreenState extends State<CarteraScreen> {
 
     return Scaffold(
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SaldoWidget(saldo: saldototal),
-              const SizedBox(height: 20),
-              PieChart(
-                dataMap: {
-                  for (var moneda in monedas) moneda.symbol: moneda.value
-                },
-                colorList: pieColors,
-                chartRadius: MediaQuery.of(context).size.width / 2.7,
-                chartType: ChartType.ring,
-                centerText: "Monedas",
-                legendOptions: const LegendOptions(
-                  showLegendsInRow: false,
-                  legendPosition: LegendPosition.right,
-                  showLegends: true,
-                  legendTextStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
+        child: Container(
+          color: Color.fromARGB(255, 255, 255, 255),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SaldoWidget(saldo: saldototal),
+                const SizedBox(height: 20),
+                PieChart(
+                  dataMap: {
+                    for (var moneda in monedas) moneda.symbol: moneda.value
+                  },
+                  colorList: pieColors,
+                  chartRadius: MediaQuery.of(context).size.width / 2.7,
+                  chartType: ChartType.ring,
+                  centerText: "Monedas",
+                  legendOptions: const LegendOptions(
+                    showLegendsInRow: false,
+                    legendPosition: LegendPosition.right,
+                    showLegends: true,
+                    legendTextStyle: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  chartValuesOptions: const ChartValuesOptions(
+                    showChartValueBackground: true,
+                    showChartValues: true,
+                    showChartValuesInPercentage: true,
+                    showChartValuesOutside: false,
+                    decimalPlaces: 2,
                   ),
                 ),
-                chartValuesOptions: const ChartValuesOptions(
-                  showChartValueBackground: true,
-                  showChartValues: true,
-                  showChartValuesInPercentage: true,
-                  showChartValuesOutside: false,
-                  decimalPlaces: 2,
+                const Text(
+                  'Lista de monedas:',
+                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                 ),
-              ),
-              const Text(
-                'Lista de monedas:',
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-              ),
-              // ListView Builder
-              // Moneda(symbol, icon, value)
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: monedas.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: AssetImage(monedas[index].icon),
-                    ),
-                    title: Text(monedas[index].symbol),
-                    subtitle: Text('Valor: \$${monedas[index].value}'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MarketPage(
-                            symbol: monedas[index].symbol,
+                // ListView Builder
+                // Moneda(symbol, icon, value)
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: monedas.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: AssetImage(monedas[index].icon),
+                      ),
+                      title: Text(monedas[index].symbol),
+                      subtitle: Text('Valor: \$${monedas[index].value}'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MarketPage(
+                              symbol: monedas[index].symbol,
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-              const SizedBox(height: 10),
-            ],
+                        );
+                      },
+                    );
+                  },
+                ),
+                const SizedBox(height: 80),
+              ],
+            ),
           ),
         ),
       ),

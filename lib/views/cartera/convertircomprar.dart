@@ -18,23 +18,6 @@ class ComprarConvertir extends StatelessWidget {
         ),
         Row(
           children: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ConvertirView(
-                      monedaName: monedaNombre,
-                    ),
-                  ),
-                );
-              },
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all<Color>(Colors.orange),
-              ),
-              child: const Text('Convertir',
-                  style: TextStyle(color: Colors.black)),
-            ),
             const SizedBox(width: 10), // Espacio entre botones
             TextButton(
               onPressed: () {

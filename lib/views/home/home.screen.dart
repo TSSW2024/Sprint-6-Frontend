@@ -66,24 +66,28 @@ class HomeScreenState extends State<HomeScreen> {
     if (!authViewModel.isAuthenticated) {
       Future.microtask(() => Navigator.pushReplacementNamed(context, '/login'));
     }
+// cambia el color del topbar
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Utem TX'),
+        title: const Text('Utem TX', style: TextStyle(fontSize: 16)),
+        titleTextStyle: const TextStyle(color: Colors.white),
+        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
         actions: <Widget>[
           IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TransactionScreen()),
-                );
-              },
-              icon: const Icon(Icons.history)),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TransactionScreen()),
+              );
+            },
+            icon: const Icon(Icons.history),
+            color: Colors.white,
+          ),
           IconButton(
             icon: const Icon(Icons.person),
+            color: Colors.white,
             onPressed: () {
-              // Aquí puedes manejar la acción cuando se presiona el botón.
-              // Por ejemplo, puedes navegar a la pantalla de perfil.
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const ProfileScreen()),
@@ -122,7 +126,7 @@ class HomeScreenState extends State<HomeScreen> {
           }).toList(),
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
-          backgroundColor: Color.fromARGB(232, 233, 217, 195),
+          backgroundColor: Color.fromARGB(255, 201, 180, 170),
           selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
           unselectedItemColor: const Color.fromARGB(255, 0, 0, 0),
           selectedFontSize: 14,

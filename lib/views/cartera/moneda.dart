@@ -51,9 +51,6 @@ class MonedaPage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-          color: Colors.black,
-          child: ComprarConvertir(monedaNombre: monedaNombre)),
     );
   }
 }
