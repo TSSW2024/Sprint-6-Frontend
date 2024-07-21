@@ -21,10 +21,10 @@ class Item {
 
 class CryptoLootBox extends StatefulWidget {
   @override
-  _CryptoLootBoxState createState() => _CryptoLootBoxState();
+  CryptoLootBoxState createState() => CryptoLootBoxState();
 }
 
-class _CryptoLootBoxState extends State<CryptoLootBox> {
+class CryptoLootBoxState extends State<CryptoLootBox> {
   final List<Item> items = [
     Item(
         chance: 0.1,
@@ -94,15 +94,15 @@ class _CryptoLootBoxState extends State<CryptoLootBox> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Créditos insuficientes'),
-            content:
-                Text('No tienes suficientes créditos para girar la ruleta.'),
+            title: const Text('Créditos insuficientes'),
+            content: const Text(
+                'No tienes suficientes créditos para girar la ruleta.'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Cerrar'),
+                child: const Text('Cerrar'),
               ),
             ],
           );
