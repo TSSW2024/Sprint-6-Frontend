@@ -18,16 +18,8 @@ class _SaldoWidgetState extends State<SaldoWidget> {
       margin: const EdgeInsets.symmetric(vertical: 20.0),
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 156, 137, 69),
+        color: Color.fromARGB(255, 62, 62, 58),
         borderRadius: BorderRadius.circular(15.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(1),
-            spreadRadius: 5,
-            blurRadius: 7,
-            offset: Offset(0, 3), // changes position of shadow
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

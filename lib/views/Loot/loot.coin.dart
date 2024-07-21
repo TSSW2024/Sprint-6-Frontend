@@ -293,11 +293,12 @@ class CryptoLootBoxState extends State<CryptoLootBox> {
             scrollPhysics: const NeverScrollableScrollPhysics(),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 110),
         ElevatedButton(
           onPressed: isSpinning ? null : spinWheel,
           child: const Text('Girar Ruleta'),
         ),
+        const SizedBox(height: 25),
         ElevatedButton(
           onPressed: isSpinning ? null : simulateSpin,
           child: const Text('Simular'),

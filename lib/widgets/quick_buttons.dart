@@ -18,8 +18,6 @@ class QuickButtons extends StatelessWidget {
             _buildQuickButton('20000'),
           ],
         ),
-        SizedBox(height: 8),
-        Text('Límite máximo: 100000 CLP'),
       ],
     );
   }
@@ -29,6 +27,14 @@ class QuickButtons extends StatelessWidget {
       onPressed: () {
         controller.text = amount;
       },
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.white,
+        backgroundColor: Color.fromARGB(255, 92, 89, 89), // Text color
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 30.0),
+      ),
       child: Text('\$$amount'),
     );
   }

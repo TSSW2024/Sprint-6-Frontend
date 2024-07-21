@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../widgets/numeric_keyboard.dart';
 import '../../widgets/quick_buttons.dart';
 
-
 class CompraView extends StatefulWidget {
   final String monedaName;
 
@@ -46,6 +45,12 @@ class _CompraViewState extends State<CompraView> {
             SizedBox(height: 20),
             Center(
               child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color.fromARGB(255, 15, 100, 43),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                ),
                 onPressed: () {
                   // naveegar a la pantalla de pago
                   Navigator.push(
@@ -57,7 +62,13 @@ class _CompraViewState extends State<CompraView> {
                             )),
                   );
                 },
-                child: Text('Pagar'),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 20.0,
+                    horizontal: 35.0,
+                  ),
+                  child: Text('Pagar', style: TextStyle(color: Colors.white)),
+                ),
               ),
             ),
           ],
@@ -70,16 +81,10 @@ class _CompraViewState extends State<CompraView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Quiero pagar'),
-            ElevatedButton(
-              onPressed: () {
-                // Lógica para "Por monto"
-              },
-              child: Text('Por monto'),
-            ),
           ],
         ),
         SizedBox(height: 8),
@@ -87,7 +92,7 @@ class _CompraViewState extends State<CompraView> {
           controller: _controller,
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
-            border: OutlineInputBorder(),
+            border: const OutlineInputBorder(),
             labelText: 'Ingresar la cantidad',
             suffixText: 'CLP',
           ),

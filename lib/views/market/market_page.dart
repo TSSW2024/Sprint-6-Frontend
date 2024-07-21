@@ -55,7 +55,7 @@ class MarketPageState extends State<MarketPage> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          color: Colors.green[200],
+          color: Color.fromARGB(255, 255, 255, 255),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
