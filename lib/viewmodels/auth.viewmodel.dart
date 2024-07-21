@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:ejemplo_1/models/users_model.dart';
+import 'package:ejemplo_1/services/crud_usuario_services.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/auth.service.dart';
@@ -15,13 +17,13 @@ class AuthViewModel extends ChangeNotifier {
   late bool _isLoading;
   String? _errorMessage;
   late bool _isAuthenticated;
-  Map<String, dynamic>? _user;
+  UserModel? _user;
   String? _token;
 
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   bool get isAuthenticated => _isAuthenticated;
-  Map<String, dynamic>? get user => _user;
+  UserModel? get user => _user;
 
   Future<void> _loadToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -48,6 +50,15 @@ class AuthViewModel extends ChangeNotifier {
 
         // Validar el token para obtener información del usuario
         await validateToken();
+
+// Verificar si el usuario ya existe antes de intentar agregarlo
+        if (_user != null) {
+          final userExists =
+              await CrudServicesAgregarUsuario().doesUserExist(_user!.uid);
+          if (!userExists) {
+            await CrudServicesAgregarUsuario().postUser(_user!);
+          }
+        }
       } else {
         _errorMessage = "Credenciales incorrectas";
         _isAuthenticated = false;
@@ -100,14 +111,14 @@ class AuthViewModel extends ChangeNotifier {
         final data = await _authService.validateToken(_token!);
         if (data != null) {
           _isAuthenticated = true;
-          _user = {
+          _user = UserModel.fromMap({
             "displayName": data["displayName"],
             "email": data["email"],
             "uid": data["uid"],
             "verified": data["emailVerified"],
             "role": data["role"],
             "photoURL": data["photoURL"],
-          };
+          });
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString("user", jsonEncode(_user));
           _errorMessage = null;

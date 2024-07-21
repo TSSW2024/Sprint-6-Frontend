@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:logger/logger.dart';
 
 class AuthService {
   final String baseURL = "https://backend-auth.tssw.cl";
@@ -12,7 +13,7 @@ class AuthService {
       headers: {"Content-Type": "application/json; charset=UTF-8"},
       body: jsonEncode({"email": email, "password": password}),
     );
-
+    //Logger().i(response.body);
     if (response.statusCode == 200) {
       final result = jsonDecode(response.body);
       return result["data"];
