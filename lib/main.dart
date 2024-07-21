@@ -1,4 +1,4 @@
-import 'package:ejemplo_1/views/Loot/credit_provider.dart';
+import 'package:ejemplo_1/views/services/transaction_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'viewmodels/auth.viewmodel.dart';
@@ -8,10 +8,10 @@ import 'views/login/login.screen.dart';
 import 'views/register/register.screen.dart';
 import 'services/profile.service.dart';
 import 'services/auth.service.dart';
+import 'views/Loot/credit_provider.dart';
 import 'views/Loot/loot.dart';
 import 'views/Loot/loot.Free.dart';
-// Importa la nueva vista de conversión
-import 'views/services/transaction_service.dart';
+import 'views/profile/profile.screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -29,7 +29,6 @@ class MainApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthViewModel(authService)),
-        ChangeNotifierProvider(create: (_) => AuthViewModel(authService)),
         ChangeNotifierProvider(create: (_) => ProfileViewModel(profileService)),
         Provider(create: (_) => transactionService),
         ChangeNotifierProvider(create: (_) => CreditProvider()),
@@ -41,6 +40,7 @@ class MainApp extends StatelessWidget {
           '/login': (context) => const LoginScreen(),
           '/register': (context) => const RegistrationScreen(),
           '/home': (context) => const HomeScreen(),
+          '/profile': (context) => const ProfileScreen(),
           '/Loot': (context) => const Loot(),
           '/LootFree': (context) => const LootFree(),
         },

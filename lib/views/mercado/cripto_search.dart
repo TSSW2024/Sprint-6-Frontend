@@ -1,3 +1,4 @@
+import 'package:ejemplo_1/views/market/market_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:http/http.dart' as http;
@@ -85,6 +86,14 @@ class CryptoTypeaheadWidgetState extends State<CryptoTypeaheadWidget> {
                     setState(() {
                       selectedSymbol = symbol;
                     });
+
+                    // Un push a MarketPage con el symbol
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MarketPage(symbol: symbol),
+                      ),
+                    );
                   },
                   loadingBuilder: (context) => const Center(
                     child: CircularProgressIndicator(),

@@ -1,9 +1,11 @@
+import 'package:ejemplo_1/models/moneda.dart';
+import 'package:ejemplo_1/views/market/market_page.dart';
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:provider/provider.dart';
 import '../home/saldo/saldo.dart';
 import '../../viewmodels/profile.viewmodel.dart';
-import '../cartera/moneda.dart'; // Asegúrate de tener la ruta correcta
+// Asegúrate de tener la ruta correcta
 
 class CarteraScreen extends StatefulWidget {
   const CarteraScreen({super.key});
@@ -16,8 +18,8 @@ class _CarteraScreenState extends State<CarteraScreen> {
   @override
   Widget build(BuildContext context) {
     var profileViewModel = Provider.of<ProfileViewModel>(context);
-    var dataMap = profileViewModel.profile.monedas.map((key, value) => MapEntry(
-        key, value['value'].toDouble())); // Convertir a Map<String, double>
+    final List<Moneda> monedas = profileViewModel.profile.monedas;
+
     var saldototal = profileViewModel.profile.saldototal;
 
     List<Color> pieColors = [
@@ -35,69 +37,60 @@ class _CarteraScreenState extends State<CarteraScreen> {
             children: <Widget>[
               SaldoWidget(saldo: saldototal),
               const SizedBox(height: 20),
-              dataMap.isNotEmpty
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: SizedBox(
-                        height: 200,
-                        child: PieChart(
-                          dataMap: dataMap.cast<String,
-                              double>(), // Cast a Map<String, double>
-                          colorList: pieColors,
-                          animationDuration: const Duration(milliseconds: 800),
-                        ),
-                      ),
-                    )
-                  : const Text('No tiene saldo'),
-              const SizedBox(height: 20),
+              PieChart(
+                dataMap: {
+                  for (var moneda in monedas) moneda.symbol: moneda.value
+                },
+                colorList: pieColors,
+                chartRadius: MediaQuery.of(context).size.width / 2.7,
+                chartType: ChartType.ring,
+                centerText: "Monedas",
+                legendOptions: const LegendOptions(
+                  showLegendsInRow: false,
+                  legendPosition: LegendPosition.right,
+                  showLegends: true,
+                  legendTextStyle: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                chartValuesOptions: const ChartValuesOptions(
+                  showChartValueBackground: true,
+                  showChartValues: true,
+                  showChartValuesInPercentage: true,
+                  showChartValuesOutside: false,
+                  decimalPlaces: 2,
+                ),
+              ),
               const Text(
                 'Lista de monedas:',
                 style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 10),
+              // ListView Builder
+              // Moneda(symbol, icon, value)
               ListView.builder(
                 shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: dataMap.length,
+                itemCount: monedas.length,
                 itemBuilder: (context, index) {
-                  String key = dataMap.keys.elementAt(index);
-                  return Card(
-                    elevation: 4,
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: AssetImage(
-                            profileViewModel.iconMap[key] ??
-                                ''), // Manejar posible nulo
-                        radius: 30,
-                      ),
-                      title: Text(key,
-                          style: const TextStyle(fontWeight: FontWeight.w500)),
-                      trailing: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MonedaPage(
-                                monedaNombre: key,
-                                symbol: profileViewModel.profile.monedas[key]
-                                        ?['symbol'] ??
-                                    '', // Manejar posible nulo
-                              ),
-                            ),
-                          );
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              Colors.greenAccent),
-                        ),
-                        child: const Text("Vender",
-                            style: TextStyle(color: Colors.white)),
-                      ),
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: AssetImage(monedas[index].icon),
                     ),
+                    title: Text(monedas[index].symbol),
+                    subtitle: Text('Valor: \$${monedas[index].value}'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MarketPage(
+                            symbol: monedas[index].symbol,
+                          ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
+              const SizedBox(height: 10),
             ],
           ),
         ),
