@@ -63,10 +63,9 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);
 
-    // Si el usuario no está autenticado, navega a /login
-    //if (!authViewModel.isAuthenticated) {
-    //Future.microtask(() => Navigator.pushReplacementNamed(context, '/login'));
-    //}
+    if (!authViewModel.isAuthenticated) {
+      Future.microtask(() => Navigator.pushReplacementNamed(context, '/login'));
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -76,8 +75,7 @@ class HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) =>  TransactionScreen()),
+                  MaterialPageRoute(builder: (context) => TransactionScreen()),
                 );
               },
               icon: const Icon(Icons.history)),
@@ -124,9 +122,9 @@ class HomeScreenState extends State<HomeScreen> {
           }).toList(),
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
-          backgroundColor: const Color.fromARGB(255, 7, 94, 177),
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white,
+          backgroundColor: Color.fromARGB(232, 233, 217, 195),
+          selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
+          unselectedItemColor: const Color.fromARGB(255, 0, 0, 0),
           selectedFontSize: 14,
           unselectedFontSize: 12,
           type: BottomNavigationBarType.fixed,

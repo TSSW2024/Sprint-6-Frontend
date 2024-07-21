@@ -1,4 +1,3 @@
-import 'package:ejemplo_1/widgets/social.login.dart';
 import 'package:ejemplo_1/widgets/text.form.global.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -138,9 +137,6 @@ class LoginScreenState extends State<LoginScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 25),
-
-                const SocialLogin(),
               ],
             ),
           ),

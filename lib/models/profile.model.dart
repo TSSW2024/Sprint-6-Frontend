@@ -1,3 +1,5 @@
+import 'package:ejemplo_1/models/moneda.dart';
+
 class Profile {
   final String name;
   final String email;
@@ -5,13 +7,13 @@ class Profile {
   final String discordLink;
   final String githubLink;
   final String facebookLink;
-  final Map<String, Map<String, dynamic>> monedas;
+  final List<Moneda> monedas;
   final double saldototal;
 
   Profile({
-    required this.name, 
-    required this.email, 
-    required this.imageUrl, 
+    required this.name,
+    required this.email,
+    required this.imageUrl,
     required this.discordLink,
     required this.githubLink,
     required this.facebookLink,
