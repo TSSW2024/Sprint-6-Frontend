@@ -34,6 +34,8 @@ class CryptoTypeaheadWidgetState extends State<CryptoTypeaheadWidget> {
     try {
       final response = await http.get(Uri.parse(url));
 
+      if (!mounted) return; // Verificar si el widget sigue montado
+
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         setState(() {
@@ -44,11 +46,18 @@ class CryptoTypeaheadWidgetState extends State<CryptoTypeaheadWidget> {
         throw Exception('Failed to load symbols: ${response.reasonPhrase}');
       }
     } catch (e) {
+      if (!mounted) return; // Verificar si el widget sigue montado
       setState(() {
         error = 'Error: $e';
         loadingSymbols = false;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    // Cancelar cualquier operación pendiente aquí si es necesario
+    super.dispose();
   }
 
   @override

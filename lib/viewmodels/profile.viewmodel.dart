@@ -1,5 +1,7 @@
 import 'package:ejemplo_1/services/profile.service.dart';
+import 'package:ejemplo_1/viewmodels/auth.viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/moneda.dart';
 import '../models/profile.model.dart';
 

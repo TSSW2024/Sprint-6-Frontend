@@ -12,8 +12,11 @@ import 'views/Loot/credit_provider.dart';
 import 'views/Loot/loot.dart';
 import 'views/Loot/loot.Free.dart';
 import 'views/profile/profile.screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MainApp());
 }
 

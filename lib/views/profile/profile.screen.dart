@@ -22,18 +22,18 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  if (user['photoURL'] != null)
+                  if (user.photoURL != null)
                     Center(
                       child: CircleAvatar(
                         radius: 50,
-                        backgroundImage: NetworkImage(user['photoURL']),
+                        backgroundImage: NetworkImage(user.photoURL),
                       ),
                     ),
                   const SizedBox(height: 20),
-                  Text('Name: ${user['displayName']}',
+                  Text('Name: ${user.displayName}',
                       style: const TextStyle(fontSize: 18)),
                   const SizedBox(height: 10),
-                  Text('Email: ${user['email']}',
+                  Text('Email: ${user.email}',
                       style: const TextStyle(fontSize: 18)),
                   const SizedBox(height: 30),
                   Center(
