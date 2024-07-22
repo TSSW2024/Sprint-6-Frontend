@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 
 class Transaction {
   String ordenId;
@@ -22,10 +23,10 @@ class Transaction {
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
     return Transaction(
-      ordenId: json['orden_id'],
-      sessionId: json['session_id'],
-      monto: json['monto'],
-      status: json['status'],
+      ordenId: json['number_order'] ?? '',
+      sessionId: json['id_session'] ?? '',
+      monto: json['amount'] ?? 0,
+      status: json['status'] ?? '',
     );
   }
 
@@ -69,12 +70,15 @@ class TransactionService {
   }
 
   Future<List<Transaction>> getLoggedUserTransactions(String sessionId) async {
+    Logger()
+        .i('Obteniendo transacciones del usuario con sessionId: $sessionId');
     var url = Uri.parse('https://backend-transaccion.tssw.cl/log/$sessionId');
     var response = await http.get(url);
 
     if (response.statusCode == 200) {
       // Procesar respuesta como lista de objetos
-      var data = json.decode(response.body) as List;
+      final List<dynamic> data = json.decode(response.body);
+      Logger().i('Transacciones obtenidas: $data');
       List<Transaction> transactions =
           data.map((e) => Transaction.fromJson(e)).toList();
       return transactions;
@@ -91,6 +95,8 @@ class TransactionService {
     // y luego buscar la transaccion por orderId
 
     List<Transaction> transactions = await getLoggedUserTransactions(sessionId);
+    Logger().i('Transacciones del usuario: $transactions');
+
     Transaction? transaction = transactions.firstWhere(
         (element) => element.ordenId == orderId,
         orElse: () => Transaction.empty());
@@ -100,5 +106,11 @@ class TransactionService {
     } else {
       return transaction;
     }
+  }
+
+  Future<bool> existsTransaction(String orderId, String sessionId) async {
+    Transaction? transaction = await getTransactionById(
+        orderId, sessionId); //usar la funcion getTransactionById
+    return transaction != null;
   }
 }

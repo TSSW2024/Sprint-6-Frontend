@@ -100,7 +100,9 @@ class MonederoService {
   }
 
   Future<Monedero?> getMonedero(UserModel user) async {
-    final url = Uri.parse('${baseUrl}wallet/$user.uid');
+    Logger().i('Obteniendo monedero del usuario con uid: ${user.uid}');
+    final url = Uri.parse('${baseUrl}wallet/${user.uid}');
+    Logger().i('URL: $url');
     final response = await http.get(
       url,
       headers: {
@@ -110,8 +112,23 @@ class MonederoService {
 
     if (response.statusCode == 200) {
       final result = jsonDecode(response.body);
-      return Monedero.fromMap(result);
+      Logger().i('Result obtenido exitosamente: $result');
+      final id = result['id'];
+      final usuarioID = result['usuarioID'];
+      final monedas = result['monedas'];
+      final monedasList = monedas
+          .map<Moneda>((moneda) => Moneda.fromMap(moneda))
+          .toList(); // Mapea las monedas a Moneda
+      final monedero = Monedero(
+        id: id,
+        usuarioID: usuarioID,
+        monedas: monedasList,
+      );
+      Logger().i('Monedero obtenido exitosamente: $monedero');
+
+      return result;
     } else {
+      Logger().e('Error al obtener monedero: ${response.statusCode}');
       throw Exception('Error al obtener monedero');
     }
   }

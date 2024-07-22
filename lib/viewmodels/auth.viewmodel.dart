@@ -36,40 +36,6 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> signInWithGoogle() async {
-    _startLoading();
-    try {
-      final userCredential = await _authService.googleLogin();
-      Logger().i("UserCredential: $userCredential");
-      if (userCredential != null) {
-        _token = userCredential["token"];
-
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString("token", _token!);
-
-        _errorMessage = null;
-
-        // Validar el token para obtener información del usuario
-        await validateToken();
-
-        if (_user != null) {
-          final userExists =
-              await CrudServicesAgregarUsuario().doesUserExist(_user!.uid);
-          if (!userExists) {
-            await CrudServicesAgregarUsuario().postUser(_user!);
-          }
-        }
-      } else {
-        _errorMessage =
-            "Error al iniciar sesión con Google: Credenciales no válidas";
-      }
-    } catch (e) {
-      _errorMessage = "Error al iniciar sesión con Google: $e";
-    } finally {
-      _stopLoading();
-    }
-  }
-
   Future<void> login(String email, String password) async {
     _startLoading();
     try {
