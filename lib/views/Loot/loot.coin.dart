@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'dart:convert';
 import 'dart:math';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'credit_provider.dart';
+import 'package:http/http.dart' as http;
 
 class Item {
   final String name;
@@ -20,58 +19,44 @@ class Item {
 }
 
 class CryptoLootBox extends StatefulWidget {
+  final String endpoint;
+  final bool isPremium;
+
+  CryptoLootBox({required this.endpoint, required this.isPremium});
+
   @override
   CryptoLootBoxState createState() => CryptoLootBoxState();
 }
 
 class CryptoLootBoxState extends State<CryptoLootBox> {
-  final List<Item> items = [
-    Item(
-        chance: 0.1,
-        name: 'Bitcoin',
-        imageUrl: 'assets/images/bitcoin.png',
-        ganancia: 0.112),
-    Item(
-        chance: 0.2,
-        name: 'Ethereum',
-        imageUrl: 'assets/images/etherum.png',
-        ganancia: 0.232),
-    Item(
-        chance: 0.3,
-        name: 'Litecoin',
-        imageUrl: 'assets/images/litecoin.png',
-        ganancia: 0.345),
-    Item(
-        chance: 0.1,
-        name: 'Tether',
-        imageUrl: 'assets/images/tether.png',
-        ganancia: 0.123),
-    Item(
-        chance: 0.1,
-        name: 'Binance Coin',
-        imageUrl: 'assets/images/binance.png',
-        ganancia: 0.123),
-    Item(
-        chance: 0.1,
-        name: 'Ripple',
-        imageUrl: 'assets/images/ripple.png',
-        ganancia: 0.453),
-    Item(
-        chance: 0.05,
-        name: 'Cardano',
-        imageUrl: 'assets/images/cardano.png',
-        ganancia: 0.663),
-    Item(
-        chance: 0.05,
-        name: 'Dogecoin',
-        imageUrl: 'assets/images/dogecoin.png',
-        ganancia: 0.123),
-  ];
-
-  // int credits = 1000; // Initial credits
+  List<Item> items = [];
   Item? selectedItem;
   CarouselController buttonCarouselController = CarouselController();
   bool isSpinning = false;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchItems();
+  }
+
+  Future<void> fetchItems() async {
+    final response = await http.get(Uri.parse(widget.endpoint));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as List;
+      setState(() {
+        items = data.map<Item>((json) => Item(
+          name: json['Nombre'],
+          chance: json['Probabilidad'],
+          imageUrl: json['Icono'],
+          ganancia: json['Ganancia'],
+        )).toList();
+      });
+    } else {
+      throw Exception('Failed to load items');
+    }
+  }
 
   Item getRandomItem() {
     final totalWeight = items.fold(0.0, (sum, item) => sum + item.chance);
@@ -88,39 +73,16 @@ class CryptoLootBoxState extends State<CryptoLootBox> {
   }
 
   void spinWheel() {
-    final creditProvider = Provider.of<CreditProvider>(context, listen: false);
-    if (creditProvider.credits < 200) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Créditos insuficientes'),
-            content: const Text(
-                'No tienes suficientes créditos para girar la ruleta.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Cerrar'),
-              ),
-            ],
-          );
-        },
-      );
-      return;
-    }
+    if (items.isEmpty) return; // Asegurarse de que haya ítems antes de girar
 
     final item = getRandomItem();
     setState(() {
       selectedItem = null;
       isSpinning = true;
-      creditProvider.deductCredits(200);
     });
 
     final itemIndex = items.indexOf(item);
-    final randomCycles =
-        Random().nextInt(5) + 5; // Random cycles between 5 and 10
+    final randomCycles = Random().nextInt(5) + 5; // Random cycles between 5 and 10
     final finalIndex = itemIndex + randomCycles * items.length;
 
     buttonCarouselController
@@ -138,6 +100,8 @@ class CryptoLootBoxState extends State<CryptoLootBox> {
   }
 
   void simulateSpin() {
+    if (items.isEmpty) return; // Asegurarse de que haya ítems antes de simular
+
     final item = getRandomItem();
     setState(() {
       selectedItem = null; // Hide the result while spinning
@@ -145,8 +109,7 @@ class CryptoLootBoxState extends State<CryptoLootBox> {
     });
 
     final itemIndex = items.indexOf(item);
-    final randomCycles =
-        Random().nextInt(5) + 5; // Random cycles between 5 and 10
+    final randomCycles = Random().nextInt(5) + 5; // Random cycles between 5 and 10
     final finalIndex = itemIndex + randomCycles * items.length;
 
     buttonCarouselController
@@ -170,56 +133,21 @@ class CryptoLootBoxState extends State<CryptoLootBox> {
       children: <Widget>[
         Row(
           children: [
-            const SizedBox(width: 20),
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.black),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.monetization_on,
-                    color: Colors.black,
-                    size: 16,
-                  ),
-                  const SizedBox(width: 5),
-                  SizedBox(
-                    width: 50, // Establece un ancho fijo para el texto
-                    child: Flexible(
-                      child: Text(
-                        NumberFormat.decimalPattern().format(
-                          Provider.of<CreditProvider>(context).credits,
-                        ),
-                        style:
-                            const TextStyle(color: Colors.black, fontSize: 16),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
             const Spacer(flex: 1),
             const Text(
-              'Loot',
+              'Caja de Botín',
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
             const Spacer(flex: 1),
             IconButton(
               onPressed: () {
-                //muestra un show dialog que muestra un mensaje que se ha suscrito al loot cada 8 horas
-                //funcion pub/sub gcp
                 showDialog(
                   context: context,
                   builder: (context) {
                     return AlertDialog(
                       title: const Text('Subscripción'),
                       content: const Text(
-                          'Te has suscrito al loot, recibirás notificaciones cada 8 horas'),
+                          'Te has suscrito a la Caja de Botín, recibirás notificaciones cada 8 horas'),
                       actions: [
                         TextButton(
                           onPressed: () {
@@ -248,7 +176,7 @@ class CryptoLootBoxState extends State<CryptoLootBox> {
                           mainAxisSize: MainAxisSize.min,
                           children: items
                               .map((item) => ListTile(
-                                    leading: Image.asset(
+                                    leading: Image.network(
                                       item.imageUrl,
                                       height: 50,
                                     ),
@@ -278,7 +206,7 @@ class CryptoLootBoxState extends State<CryptoLootBox> {
           items: items.map((item) {
             return Builder(
               builder: (BuildContext context) {
-                return Image.asset(item.imageUrl, fit: BoxFit.cover);
+                return Image.network(item.imageUrl, fit: BoxFit.cover);
               },
             );
           }).toList(),
@@ -296,12 +224,27 @@ class CryptoLootBoxState extends State<CryptoLootBox> {
         const SizedBox(height: 110),
         ElevatedButton(
           onPressed: isSpinning ? null : spinWheel,
-          child: const Text('Girar Ruleta'),
+          child: const Text(
+            'Girar Ruleta',
+            style: TextStyle(color: Colors.white),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.yellow[700],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
         ),
         const SizedBox(height: 25),
         ElevatedButton(
           onPressed: isSpinning ? null : simulateSpin,
-          child: const Text('Simular'),
+          child: const Text('Simular', style: TextStyle(color: Colors.white)),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
         ),
         if (selectedItem != null)
           Padding(

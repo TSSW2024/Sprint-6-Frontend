@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '/views/home/modal/loot_free_manager.dart';
-import 'dart:async';
 
 class DescubrirModal extends StatefulWidget {
   @override
@@ -9,51 +7,23 @@ class DescubrirModal extends StatefulWidget {
 }
 
 class _DescubrirModalState extends State<DescubrirModal> {
-  late bool lootFreeAvailable;
-  late Duration timeUntilNextLoot;
-  late Timer timer;
-  final LootFreeManager lootFreeManager = LootFreeManager({
-    'loot1': LootConfig(hours: 2, minutes: 38), // Configurar tiempo de loot1
-    'loot2': LootConfig(hours: 20, minutes: 0), // Configurar tiempo de loot2
-  });
-
-  @override
-  void initState() {
-    super.initState();
-    lootFreeAvailable = lootFreeManager.isLootFreeAvailable();
-    timeUntilNextLoot = lootFreeManager.timeUntilNextLoot(
-        lootFreeAvailable ? 'loot1' : 'loot2'); // Inicializar timeUntilNextLoot
-
-    // Configurar temporizador para actualizar el tiempo cada segundo
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        lootFreeAvailable = lootFreeManager.isLootFreeAvailable();
-        timeUntilNextLoot = lootFreeManager
-            .timeUntilNextLoot(lootFreeAvailable ? 'loot1' : 'loot2');
-      });
-    });
+void handleLootSelection(String tipoCaja) {
+  String endpoint;
+  if (tipoCaja == 'normal') {
+    endpoint = 'https://api-loot.tssw.cl/caja1';
+  } else if (tipoCaja == 'premium') {
+    endpoint = 'https://api-loot.tssw.cl/caja2';
+  } else {
+    return; // Si el tipo de caja no es válido, no hacer nada
   }
 
-  @override
-  void dispose() {
-    timer.cancel(); // Cancelar el temporizador al eliminar el estado del widget
-    super.dispose();
-  }
+  Navigator.pushNamed(
+    context,
+    '/Loot',
+    arguments: endpoint,
+  );
+}
 
-  void handleLootFreeTap() {
-    // Manejar el toque en el botón de lootFree
-    if (lootFreeAvailable) {
-      // Abrir el lootFree
-      Navigator.pushNamed(context, '/LootFree');
-    } else {
-      // Mostrar mensaje si el lootFree no está disponible
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('El loot Free no está disponible en este momento.'),
-        ),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +70,7 @@ class _DescubrirModalState extends State<DescubrirModal> {
                           trailing: const Padding(
                             padding: EdgeInsets.only(right: 10),
                             child: Text(
-                              '1.280 CLP',
+                              '55.000 CLP',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
@@ -108,7 +78,7 @@ class _DescubrirModalState extends State<DescubrirModal> {
                             ),
                           ),
                           onTap: () {
-                            Navigator.pushNamed(context, '/Loot');
+                            handleLootSelection('normal');
                           },
                         ),
                       ),
@@ -124,15 +94,19 @@ class _DescubrirModalState extends State<DescubrirModal> {
                               width: 23,
                             ),
                             title: const Text('Caja Premium'),
-                            trailing: lootFreeAvailable
-                                ? const Text('Disponible',
-                                    style: TextStyle(
-                                        color: Color.fromRGBO(76, 175, 80, 1)))
-                                : Text(
-                                    'Próximo en: ${timeUntilNextLoot.inHours}:${(timeUntilNextLoot.inMinutes % 60).toString().padLeft(2, '0')}:${(timeUntilNextLoot.inSeconds % 60).toString().padLeft(2, '0')}',
-                                    style: const TextStyle(color: Colors.red),
-                                  ),
-                            onTap: handleLootFreeTap),
+                            trailing: const Padding(
+                              padding: EdgeInsets.only(right: 10),
+                              child: Text(
+                                '100.000 CLP',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            onTap: () {
+                              handleLootSelection('premium');
+                            }),
                       ),
                     ],
                   ),

@@ -11,11 +11,14 @@ class LootFree extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Loot Free'),
       ),
-      body:  Column(
+      body: Column(
         children: [
           DropsWidget(),
-          const SizedBox(height: 50,),
-          CryptoLootBox(),
+          const SizedBox(height: 50),
+          CryptoLootBox(
+            endpoint: 'https://api-loot.tssw.cl/caja1',
+            isPremium: false,
+          ),
         ],
       ),
     );
