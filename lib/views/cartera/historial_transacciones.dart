@@ -22,17 +22,22 @@ class Transaction {
     String dateTime = json['transaction_date'];
     DateTime parsedDate = DateTime.parse(dateTime);
     String date = '${parsedDate.year}-${parsedDate.month}-${parsedDate.day}';
-    String time = '${parsedDate.hour}:${parsedDate.minute}:${parsedDate.second}';
+    String time =
+        '${parsedDate.hour}:${parsedDate.minute}:${parsedDate.second}';
 
     return Transaction(
-      description: json['authorization_code'], // deje el codigo de autorizacion solo para diferenciar las transacciones
+      description: json[
+          'authorization_code'], // deje el codigo de autorizacion solo para diferenciar las transacciones
       amount: json['amount'].toString(),
       network: json['payment_type_code'],
       date: date,
       time: time,
     );
   }
+
+  Object? toJson() {}
 }
+
 class TransactionScreen extends StatefulWidget {
   @override
   _TransactionScreenState createState() => _TransactionScreenState();
@@ -48,7 +53,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
   }
 
   Future<void> fetchTransactions() async {
-    final response = await http.get(Uri.parse('https://backend-transaccion.tssw.cl/log/todo'));
+    final response = await http
+        .get(Uri.parse('https://backend-transaccion.tssw.cl/log/todo'));
 
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -78,7 +84,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text(transactions[index].description),
-                  subtitle: Text('Monto: ${transactions[index].amount} | Tipo: ${transactions[index].network}'),
+                  subtitle: Text(
+                      'Monto: ${transactions[index].amount} | Tipo: ${transactions[index].network}'),
                   trailing: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [

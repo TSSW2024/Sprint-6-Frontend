@@ -34,6 +34,8 @@ dependencies:
   syncfusion_flutter_charts: ^21.2.4
   logger: ^2.4.0
   google_sign_in: ^6.2.1
+  webview_flutter: ^4.8.0
+  flutter_webview_plugin: ^0.4.0
 
 dev_dependencies:
   flutter_test:
