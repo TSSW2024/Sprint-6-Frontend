@@ -1,3 +1,5 @@
+import 'package:ejemplo_1/services/crud_monedero_service.dart';
+
 class UserModel {
   final String displayName;
   final String email;
@@ -17,12 +19,12 @@ class UserModel {
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      displayName: map['displayName'],
-      email: map['email'],
-      uid: map['uid'],
-      verified: map['verified'],
-      role: map['role'],
-      photoURL: map['photoURL'],
+      displayName: map['displayName'] ?? 'usuario no identificado',
+      email: map['email'] ?? 'usuario no identificado',
+      uid: map['uid'] ?? '',
+      verified: map['verified'] ?? false,
+      role: map['role'] ?? 'none',
+      photoURL: map['photoURL'] ?? '',
     );
   }
 
