@@ -23,7 +23,8 @@ class Transaction {
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
     String dateTime = json['transaction_date'];
-    DateTime parsedDate = DateTime.parse(dateTime);
+    // Parsear la hora de manera local
+    DateTime parsedDate = DateTime.parse(dateTime).toLocal();
     String date = '${parsedDate.year}-${parsedDate.month}-${parsedDate.day}';
     String time =
         '${parsedDate.hour}:${parsedDate.minute}:${parsedDate.second}';
@@ -90,7 +91,13 @@ class _TransactionScreenState extends State<TransactionScreen> {
         title: Text('Transacciones'),
       ),
       body: transactions.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? ListView(
+              children: const [
+                ListTile(
+                  title: Text('No hay transacciones'),
+                ),
+              ],
+            )
           : ListView.builder(
               itemCount: transactions.length,
               itemBuilder: (context, index) {

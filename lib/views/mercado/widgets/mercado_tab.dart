@@ -41,9 +41,7 @@ class MercadoTab extends StatelessWidget {
               child: FutureBuilder<MonedasResponse>(
                 future: futureMonedas,
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
+                  if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData) {
                     return const Center(

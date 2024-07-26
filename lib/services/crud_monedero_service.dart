@@ -3,6 +3,9 @@ import 'package:http/http.dart' as http;
 import 'package:ejemplo_1/models/users_model.dart';
 import 'package:logger/logger.dart';
 
+import 'dart:async';
+import 'crypto_conversion_service.dart';
+
 class Moneda {
   final int id;
   final String nombre;
@@ -14,7 +17,9 @@ class Moneda {
     return Moneda(
       id: map['id'] ?? 0,
       nombre: map['nombre'] ?? '',
-      cantidad: map['cantidad'] ?? 0.0,
+      cantidad: (map['cantidad'] is int)
+          ? (map['cantidad'] as int).toDouble()
+          : (map['cantidad'] ?? 0.0),
     );
   }
 
@@ -22,7 +27,7 @@ class Moneda {
     return {
       'id': id,
       'nombre': nombre,
-      'cantidad': cantidad,
+      'cantidad': cantidad % 1 == 0 ? cantidad.toInt() : cantidad,
     };
   }
 
@@ -37,7 +42,11 @@ class Monedero {
   final String usuarioID;
   final List<Moneda> monedas;
 
-  Monedero({required this.id, required this.usuarioID, required this.monedas});
+  Monedero({
+    required this.id,
+    required this.usuarioID,
+    required this.monedas,
+  });
 
   factory Monedero.fromMap(Map<String, dynamic> map) {
     return Monedero(
@@ -60,14 +69,43 @@ class Monedero {
     };
   }
 
-  // factory empty
-
   factory Monedero.empty() {
     return Monedero(
       id: 0,
       usuarioID: '',
       monedas: [],
     );
+  }
+
+  Future<double> getSaldoTotalEnCLP() async {
+    final conversionService = CryptoConversionService();
+    double total = 0.0;
+    for (final moneda in monedas) {
+      try {
+        final valorEnCLP = await conversionService.convertCryptoToCLP(
+            moneda.nombre, moneda.cantidad);
+        total += valorEnCLP;
+      } catch (e) {
+        Logger().e('Error al convertir ${moneda.nombre} a CLP: $e');
+      }
+    }
+    return total;
+  }
+
+  Future<Map<String, double>> get dataMap async {
+    final Map<String, double> dataMap = {};
+    final conversionService = CryptoConversionService();
+
+    for (final moneda in monedas) {
+      try {
+        final valorEnCLP = await conversionService.convertCryptoToCLP(
+            moneda.nombre, moneda.cantidad);
+        dataMap[moneda.nombre] = valorEnCLP;
+      } catch (e) {
+        Logger().e('Error al convertir ${moneda.nombre} a CLP: $e');
+      }
+    }
+    return dataMap;
   }
 }
 
@@ -99,6 +137,41 @@ class MonederoService {
     }
   }
 
+  // el endpoint /wallet/moneda con POST
+  // json:
+  //{
+  //"userId": "9gq1YfnTLdQnXk8vMH4YqnqB5u62",
+  //"moneda": {
+  //  "id": 7416062790,
+  //  "nombre": "BTCUSDT",
+  //  "cantidad": 1
+  //}
+  // permite agregar una moneda a un monedero
+  Future<void> addMoneda(String sessionId, Map<String, dynamic> moneda) {
+    final url = Uri.parse('${baseUrl}wallet/moneda');
+    return http
+        .post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'userId': sessionId,
+        'moneda': moneda,
+      }),
+    )
+        .then((response) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Logger().i('Moneda agregada exitosamente');
+        Logger().i('Response body: ${response.body}');
+      } else {
+        Logger().e('Error al agregar moneda: ${response.statusCode}');
+        Logger().i('Response body: ${response.body}');
+        throw Exception('Error al agregar moneda');
+      }
+    });
+  }
+
   Future<Monedero?> getMonedero(UserModel user) async {
     Logger().i('Obteniendo monedero del usuario con uid: ${user.uid}');
     final url = Uri.parse('${baseUrl}wallet/${user.uid}');
@@ -113,20 +186,7 @@ class MonederoService {
     if (response.statusCode == 200) {
       final result = jsonDecode(response.body);
       Logger().i('Result obtenido exitosamente: $result');
-      final id = result['id'];
-      final usuarioID = result['usuarioID'];
-      final monedas = result['monedas'];
-      final monedasList = monedas
-          .map<Moneda>((moneda) => Moneda.fromMap(moneda))
-          .toList(); // Mapea las monedas a Moneda
-      final monedero = Monedero(
-        id: id,
-        usuarioID: usuarioID,
-        monedas: monedasList,
-      );
-      Logger().i('Monedero obtenido exitosamente: $monedero');
-
-      return result;
+      return Monedero.fromMap(result);
     } else {
       Logger().e('Error al obtener monedero: ${response.statusCode}');
       throw Exception('Error al obtener monedero');
@@ -134,9 +194,6 @@ class MonederoService {
   }
 
   Future<bool> doesMonederoExist(UserModel user) async {
-    //utiliza getmonedero si falla devuelve el bool
-    //si no falla devuelve true
-
     try {
       await getMonedero(user);
       return true;

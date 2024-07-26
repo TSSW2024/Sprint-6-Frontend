@@ -1,8 +1,12 @@
+import 'package:ejemplo_1/viewmodels/auth.viewmodel.dart';
+import 'package:ejemplo_1/widgets/loading.widget.dart';
+import 'package:ejemplo_1/widgets/text.form.global.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,31 +42,12 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _dobController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
-  DateTime? _selectedDate;
   bool _acceptedTerms = false;
   bool _showTermsOverlay = false;
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-        _dobController.text =
-            '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year.toString()}';
-      });
-    }
-  }
 
   void _toggleTermsOverlay() {
     setState(() {
@@ -72,6 +57,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final AuthViewModel authViewModel = Provider.of<AuthViewModel>(context);
+
+    // Si el usuario ya está autenticado, navegar a /home
+    if (authViewModel.isAuthenticated) {
+      Future.microtask(() => Navigator.pushReplacementNamed(context, '/home'));
+    }
+
+    // Mostrar el LoadingWidget si está cargando
+    if (authViewModel.isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: LoadingWidget(), // Usar el LoadingWidget aquí
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registro'),
@@ -105,57 +106,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 30),
-            TextField(
-              controller: _usernameController,
-              maxLength: 15, // Limites el número de caracteres de usuario
-              decoration: const InputDecoration(
-                labelText: 'Nombre de usuario',
-                border: OutlineInputBorder(),
-              ),
-            ),
             const SizedBox(height: 20),
-            TextField(
+            TextFormGlobal(
               controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Correo electrónico',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.emailAddress,
+              text: 'Correo electrónico',
+              obscure: false,
+              textInputType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 20),
-            TextField(
+            TextFormGlobal(
               controller: _passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Contraseña',
-                border: OutlineInputBorder(),
-              ),
-              obscureText: true,
+              text: 'Contraseña',
+              obscure: true,
+              textInputType: TextInputType.text,
             ),
             const SizedBox(height: 20),
-            TextField(
+            TextFormGlobal(
               controller: _confirmPasswordController,
-              decoration: const InputDecoration(
-                labelText: 'Confirmar contraseña',
-                border: OutlineInputBorder(),
-              ),
-              obscureText: true,
+              text: 'Confirmar contraseña',
+              obscure: true,
+              textInputType: TextInputType.text,
             ),
             const SizedBox(height: 20),
-            TextField(
-              controller: _dobController,
-              decoration: const InputDecoration(
-                labelText: 'Fecha de nacimiento (dd/mm/yyyy)',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(
-                    10), // Limita la longitud a 10 caracteres (incluidas las barras)
-                FilteringTextInputFormatter.digitsOnly,
-                DateInputFormatter(), // Aplica el formateador personalizado
-              ],
-            ),
             const SizedBox(height: 20),
             Row(
               children: [
@@ -254,13 +226,10 @@ Gracias por elegir UtemTX.
               child: ElevatedButton(
                 onPressed: _acceptedTerms
                     ? () {
-                        final username = _usernameController.text;
                         final password = _passwordController.text;
                         final email = _emailController.text;
-                        final dob = _selectedDate != null
-                            ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
-                            : '';
-                        // Manejar la lógica de registro aquí
+
+                        authViewModel.register(email, password);
                       }
                     : null,
                 child: const Text('Siguiente'),
@@ -279,52 +248,9 @@ Gracias por elegir UtemTX.
 
   @override
   void dispose() {
-    _usernameController.dispose();
     _passwordController.dispose();
     _emailController.dispose();
-    _dobController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
-  }
-}
-
-class DateInputFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    var text = newValue.text;
-
-    // Si la selección baseOffset es 0, no se hace ningún formato
-    if (newValue.selection.baseOffset == 0) {
-      return newValue;
-    }
-
-    var buffer = StringBuffer();
-    var nonZeroIndex = 0;
-
-    for (var i = 0; i < text.length; i++) {
-      buffer.write(text[i]);
-      nonZeroIndex++;
-
-      // Inserta barras diagonales en las posiciones adecuadas
-      if (nonZeroIndex == 2 || nonZeroIndex == 4) {
-        if (text[i] != '/') {
-          buffer.write('/');
-        }
-      }
-    }
-
-    var formattedText = buffer.toString();
-
-    // Si se excede la longitud de 10 caracteres, devuelve el valor antiguo
-    if (formattedText.length > 10) {
-      return oldValue;
-    }
-
-    // Devuelve el nuevo valor formateado con la selección al final
-    return TextEditingValue(
-      text: formattedText,
-      selection: TextSelection.collapsed(offset: formattedText.length),
-    );
   }
 }

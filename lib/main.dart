@@ -2,11 +2,9 @@ import 'package:ejemplo_1/views/services/transaction_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'viewmodels/auth.viewmodel.dart';
-import 'viewmodels/profile.viewmodel.dart';
 import 'views/home/home.screen.dart';
 import 'views/login/login.screen.dart';
 import 'views/register/register.screen.dart';
-import 'services/profile.service.dart';
 import 'services/auth.service.dart';
 import 'views/Loot/credit_provider.dart';
 import 'views/Loot/loot.dart';
@@ -20,19 +18,18 @@ void main() async {
   runApp(const MainApp());
 }
 
+
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final profileService = ProfileService();
     final authService = AuthService();
     final transactionService = TransactionService();
 
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthViewModel(authService)),
-        ChangeNotifierProvider(create: (_) => ProfileViewModel(profileService)),
         Provider(create: (_) => transactionService),
         ChangeNotifierProvider(create: (_) => CreditProvider()),
       ],

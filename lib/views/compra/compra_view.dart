@@ -1,3 +1,4 @@
+import 'package:ejemplo_1/services/crypto_conversion_service.dart';
 import 'package:ejemplo_1/views/compra/webpay_view.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/numeric_keyboard.dart';
@@ -14,6 +15,43 @@ class CompraView extends StatefulWidget {
 
 class _CompraViewState extends State<CompraView> {
   TextEditingController _controller = TextEditingController();
+  CryptoConversionService _conversionService = CryptoConversionService();
+  double? _amountInCrypto;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_onAmountChanged);
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onAmountChanged);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onAmountChanged() async {
+    final amountText = _controller.text;
+    if (amountText.isNotEmpty) {
+      final amountInCLP = double.tryParse(amountText) ?? 0;
+      try {
+        final amountInCrypto = await _conversionService.convertCLPToCrypto(
+            widget.monedaName, amountInCLP);
+        setState(() {
+          _amountInCrypto = amountInCrypto;
+        });
+      } catch (e) {
+        setState(() {
+          _amountInCrypto = null;
+        });
+      }
+    } else {
+      setState(() {
+        _amountInCrypto = null;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,12 +90,13 @@ class _CompraViewState extends State<CompraView> {
                   ),
                 ),
                 onPressed: () {
-                  // naveegar a la pantalla de pago
+                  if (_amountInCrypto == null) return;
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => PagarView(
-                              cantidad: _controller.text,
+                              precio: _controller.text,
+                              cantidad: _amountInCrypto!,
                               monedaName: moneda,
                             )),
                   );
@@ -71,6 +110,17 @@ class _CompraViewState extends State<CompraView> {
                 ),
               ),
             ),
+            SizedBox(height: 20),
+            if (_amountInCrypto != null)
+              Text(
+                'Cantidad de monedas que puedes comprar: ${_amountInCrypto!.toInt()}', // Ajusta el número de decimales según tu necesidad
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              )
+            else
+              Text(
+                'Cantidad de monedas que puedes comprar: 0',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
           ],
         ),
       ),
