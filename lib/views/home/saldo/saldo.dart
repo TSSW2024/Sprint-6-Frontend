@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Importa la biblioteca intl
 
 class SaldoWidget extends StatefulWidget {
   final double saldo;
@@ -6,19 +7,25 @@ class SaldoWidget extends StatefulWidget {
   const SaldoWidget({super.key, required this.saldo});
 
   @override
-  _SaldoWidgetState createState() => _SaldoWidgetState();
+  SaldoWidgetState createState() => SaldoWidgetState();
 }
 
-class _SaldoWidgetState extends State<SaldoWidget> {
+class SaldoWidgetState extends State<SaldoWidget> {
   bool _showSaldo = true;
 
   @override
   Widget build(BuildContext context) {
+    final formatter = NumberFormat.currency(
+      locale: 'es_CL', // Define la localización para CLP
+      symbol: '\$', // Usa el símbolo del dólar, o cámbialo si usas otro
+      decimalDigits: 2, // No mostrar decimales
+    );
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 20.0),
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 62, 62, 58),
+        color: const Color.fromARGB(255, 62, 62, 58),
         borderRadius: BorderRadius.circular(15.0),
       ),
       child: Column(
@@ -48,7 +55,7 @@ class _SaldoWidgetState extends State<SaldoWidget> {
           ),
           const SizedBox(height: 10),
           Text(
-            _showSaldo ? '\$${widget.saldo}' : '******',
+            _showSaldo ? formatter.format(widget.saldo) : '******',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 24.0,

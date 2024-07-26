@@ -6,7 +6,7 @@ class UserModel {
   final String uid;
   final bool verified;
   final String role;
-  final String photoURL;
+  String photoURL;
 
   UserModel({
     required this.displayName,

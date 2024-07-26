@@ -9,11 +9,15 @@ import 'package:ejemplo_1/views/services/transaction_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PagarView extends StatefulWidget {
-  final String cantidad;
+  final String precio;
   final String monedaName;
+  final double cantidad;
 
   const PagarView(
-      {super.key, required this.cantidad, required this.monedaName});
+      {super.key,
+      required this.cantidad,
+      required this.precio,
+      required this.monedaName});
 
   @override
   PagarViewState createState() => PagarViewState();
@@ -38,23 +42,51 @@ class PagarViewState extends State<PagarView> {
 
   @override
   Widget build(BuildContext context) {
+    final int cantidadInt = widget.cantidad.toInt();
+    if (cantidadInt == 0) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Depositar Dinero'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error, color: Colors.red, size: 100),
+              const SizedBox(height: 20),
+              const Text('No se puede depositar 0 monedas',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Volver a la página principal'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     if (pagoExitoso) {
       Logger().i(
           'Pago exitoso \n aquí ya se puede agregar la lógica para agregar la nueva moneda a la lista de monedas del usuario');
       Logger().i(
           'para luego enviarla al backend, enviar la nueva lista de monedas al backend que son las antiguas más la nueva moneda');
 
-      final Moneda moneda = Moneda(
-        id: widget.monedaName.hashCode,
-        nombre: widget.monedaName,
-        // convertir la cantidad porque esta en pesos y se debe convertir a la moneda correspondiente
-        cantidad: _convertirMoneda(
-          double.tryParse(widget.cantidad) ?? 0.0,
-          widget.monedaName,
-        ),
-      );
+      int now = DateTime.now().millisecondsSinceEpoch;
+      Map<String, dynamic> mapMoneda = {
+        'id': now,
+        'nombre': widget.monedaName,
+        'cantidad': widget.cantidad.toInt(),
+      };
+
+      Moneda moneda = Moneda.fromMap(mapMoneda);
 
       Logger().i('Payload: \n userId: $sessionId \n moneda: ${moneda.toMap()}');
+
+      MonederoService().addMoneda(sessionId, mapMoneda);
+      // Aquí se debe agregar la moneda al monedero del usuario
 
       return Scaffold(
         appBar: AppBar(
@@ -80,10 +112,6 @@ class PagarViewState extends State<PagarView> {
         ),
       );
     }
-
-    final double cantidadCLP = double.tryParse(widget.cantidad) ?? 0.0;
-    final double cantidadConvertida =
-        _convertirMoneda(cantidadCLP, widget.monedaName);
 
     return Scaffold(
       appBar: AppBar(
@@ -128,7 +156,7 @@ class PagarViewState extends State<PagarView> {
                   const SizedBox(height: 10),
                   Center(
                       child: Text(
-                    "\$ ${widget.cantidad} CLP",
+                    "\$ ${widget.precio} CLP",
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),
                   )),
@@ -145,7 +173,7 @@ class PagarViewState extends State<PagarView> {
                       const Icon(Icons.check_circle, color: Colors.green),
                       const SizedBox(width: 5),
                       Text(
-                        '$cantidadConvertida ${widget.monedaName}',
+                        '${widget.cantidad.toInt()} ${widget.monedaName}',
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
@@ -163,7 +191,7 @@ class PagarViewState extends State<PagarView> {
                             Transaction transaction = Transaction(
                               ordenId: ordenId,
                               sessionId: sessionId,
-                              monto: cantidadCLP.toInt(),
+                              monto: int.parse(widget.precio),
                             );
 
                             try {
@@ -258,22 +286,5 @@ class PagarViewState extends State<PagarView> {
         ),
       ),
     );
-  }
-
-  double _convertirMoneda(double cantidad, String monedaName) {
-    const double tasaBtc = 0.000000018689; // 1 CLP = 0.000000018689 BTC
-    const double tasaEth = 0.000000346378; // 1 CLP = 0.000000346378 ETH
-    const double tasalite = 0.000015904257778; // 1 CLP = 0.16155089 USD
-
-    switch (monedaName) {
-      case 'BTCUSDT':
-        return cantidad * tasaBtc;
-      case 'Ethereum':
-        return cantidad * tasaEth;
-      case 'Litecoin':
-        return cantidad * tasalite;
-      default:
-        return 0.0;
-    }
   }
 }
